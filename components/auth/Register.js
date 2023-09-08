@@ -40,20 +40,27 @@ export class Register extends Component {
               // Formatting the appearance
               style={styles.input} 
               // When empty this is the value thats filled
-              placeholder = " Name"
+              placeholder = "Name"
               // JS assumes that the argugment we pass is same as the variable we created 
               onChangeText={(name)=> this.setState({name})}
           />
   
           <TextInput
               style={styles.input} 
-              placeholder = " Email" 
+              placeholder = "Email" 
               onChangeText={(name)=> this.setState({email})}
           />
   
           <TextInput 
               style={styles.input}
-              placeholder = " password"
+              placeholder = "Password"
+              secureEntry = {true} // secures passowrd text 
+              onChangeText={(name)=> this.setState({password})}
+          />
+
+          <TextInput 
+              style={styles.input}
+              placeholder = "Confirm Password"
               secureEntry = {true} // secures passowrd text 
               onChangeText={(name)=> this.setState({password})}
           />
