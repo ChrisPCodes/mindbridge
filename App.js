@@ -68,10 +68,11 @@ export class App extends Component {
         </View>
       )
     }
-
+    // Todo Switch off once sign out is implemented 
+    // <Stack.Navigator initialRouteName={loggedIn ? 'Container': 'Landing'}>
     return (
       <NavigationContainer>
-        <Stack.Navigator initialRouteName={loggedIn ? 'Container': 'Landing'}>
+        <Stack.Navigator initialRouteName={'Landing'}>
           <Stack.Screen name ="Landing" component        = {LandingScreen} options={{headerShown:false}}/>
           <Stack.Screen name ="Register" component       = {RegisterScreen}/>
           <Stack.Screen name ="Login" component          = {LoginScreen}/>
