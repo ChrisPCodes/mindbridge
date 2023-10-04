@@ -27,8 +27,6 @@ export default function Landing({navigation}) {
 
       
       <TouchableOpacity style = {styles.button}
-      //TODO: Fix styling for text for some reason its not working with the styling 
-      // Note: Currenlty no page 'About' will give navigation error when testing 
       onPress={()=> navigation.navigate('About')}>
         <Text style={styles.buttonText}> About  </Text>
       </TouchableOpacity>
