@@ -30,6 +30,7 @@ import LoginScreen from './components/auth/Login';
 import ForgotPassword from './components/auth/ForgotPass';
 import Container from './components/auth/navigation/container';
 import AboutScreen from './components/auth/About';
+import UserFeedback from './components/auth/Survey';
 
 const Stack = createNativeStackNavigator();
 const auth = FIREBASE_AUTH;
@@ -73,8 +74,9 @@ export class App extends Component {
     // <Stack.Navigator initialRouteName={loggedIn ? 'Container': 'Landing'}>
     return (
       <NavigationContainer>
-        <Stack.Navigator initialRouteName={'Landing'}>
+        <Stack.Navigator initialRouteName={'UserFeedback'}>
           <Stack.Screen name ="Landing" component        = {LandingScreen} options={{headerShown:false}}/>
+          <Stack.Screen name ="UserFeedback" component   = {UserFeedback}options={{headerShown:false}}/>
           <Stack.Screen name ="Register" component       = {RegisterScreen}/>
           <Stack.Screen name ="Login" component          = {LoginScreen}/>
           <Stack.Screen name ="Container" component      = {Container} options={{headerShown:false}}/> 

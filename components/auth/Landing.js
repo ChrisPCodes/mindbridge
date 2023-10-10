@@ -30,6 +30,7 @@ export default function Landing({navigation}) {
       onPress={()=> navigation.navigate('About')}>
         <Text style={styles.buttonText}> About  </Text>
       </TouchableOpacity>
+      
     
 
     </View>
