@@ -1,93 +1,131 @@
-import React, { Component } from 'react'
-import { View, Text,TouchableOpacity } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import {styles} from './Styles'
+import React, { useState } from 'react';
+import { View, Text, TextInput, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
 
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAuth, onAuthStateChanged } from "@firebase/auth";
+const GroupChatPage = () => {
+  const [messages, setMessages] = useState(messagesData);
+  const [newMessage, setNewMessage] = useState('');
 
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+  const handleSend = () => {
+    if (newMessage.trim() !== '') {
+      setMessages([
+        ...messages,
+        {
+          id: (messages.length + 1).toString(),
+          user: 'You',
+          avatarUri: 'https://example.com/your-avatar.jpg',
+          text: newMessage,
+        },
+      ]);
+      setNewMessage('');
+    }
+  };
 
-// Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyAq3F_9cn_1tJnNP1S3Soao4TCc79dOwaE",
-  authDomain: "mind-bridge-a93eb.firebaseapp.com",
-  projectId: "mind-bridge-a93eb",
-  storageBucket: "mind-bridge-a93eb.appspot.com",
-  messagingSenderId: "1052298113718",
-  appId: "1:1052298113718:web:2abbf8ed75b0c7e6f7ac17"
+  return (
+    <View style={styles.container}>
+      <Text style={styles.header}>Group Chat</Text>
+      <FlatList
+        data={messages}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <View style={styles.messageContainer}>
+            <Image source={{ uri: item.avatarUri }} style={styles.avatar} />
+            <View style={styles.messageContent}>
+              <Text style={styles.userName}>{item.user}:</Text>
+              <Text style={styles.messageText}>{item.text}</Text>
+            </View>
+          </View>
+        )}
+      />
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="Type your message..."
+          value={newMessage}
+          onChangeText={(text) => setNewMessage(text)}
+        />
+        <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
+          <Text style={styles.sendButtonText}>Send</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
 };
 
-export const FIREBASE_APP = initializeApp(firebaseConfig); 
-export const FIREBASE_AUTH = getAuth(FIREBASE_APP); 
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 16,
+  },
+  header: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 16,
+  },
+  messageContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 8,
+  },
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 8,
+  },
+  messageContent: {
+    flex: 1,
+  },
+  userName: {
+    fontWeight: 'bold',
+    marginBottom: 2,
+  },
+  messageText: {},
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 16,
+  },
+  input: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    paddingHorizontal: 8,
+  },
+  sendButton: {
+    marginLeft: 8,
+    backgroundColor: 'blue',
+    padding: 8,
+    borderRadius: 8,
+  },
+  sendButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+});
 
-import LandingScreen from './components/auth/Landing';
-import RegisterScreen from './components/auth/Register';
-import LoginScreen from './components/auth/Login';
-import ForgotPassword from './components/auth/ForgotPass';
-import Container from './components/auth/navigation/container';
-import AboutScreen from './components/auth/About';
-import UserFeedback from './components/auth/Survey';
+export default GroupChatPage;
 
-const Stack = createNativeStackNavigator();
-const auth = FIREBASE_AUTH;
 
-export class App extends Component {
-  constructor(props){
-    super(props);
-    this.state = {
-      loaded: false,
-    }
-  }
 
-  componentDidMount(){
-    onAuthStateChanged(auth,(user)=>{
-      if(!user){
-        this.setState({
-          loggedIn: false,
-          loaded:true,
-        })
-      }else{
-        this.setState({
-          loggedIn: true,
-          loaded:true,
-      })
-          }
-    })
-  }
-  
-  render() {
-    const {loggedIn, loaded} = this.state;
-
-    if (!loaded){
-      return(
-        <View style={styles.container}>
-          <Text>Loading...</Text>
-        </View>
-      )
-    }
-    
-    // Todo Switch off once sign out is implemented 
-    // <Stack.Navigator initialRouteName={loggedIn ? 'Container': 'Landing'}>
-    return (
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName={'UserFeedback'}>
-          <Stack.Screen name ="Landing" component        = {LandingScreen} options={{headerShown:false}}/>
-          <Stack.Screen name ="UserFeedback" component   = {UserFeedback}options={{headerShown:false}}/>
-          <Stack.Screen name ="Register" component       = {RegisterScreen}/>
-          <Stack.Screen name ="Login" component          = {LoginScreen}/>
-          <Stack.Screen name ="Container" component      = {Container} options={{headerShown:false}}/> 
-          <Stack.Screen name ="ForgotPassword" component = {ForgotPassword}/>
-          <Stack.Screen name ="About" component          ={AboutScreen}/>
-        </Stack.Navigator>  
-      </NavigationContainer>
-    );
-  
-}
-}
-
-export default App;
-
+const messagesData = [
+  {
+    id: '1',
+    user: 'Teammate',
+    avatarUri: 'https://png.pngtree.com/png-clipart/20190921/original/pngtree-user-avatar-boy-png-image_4693645.jpg',
+    text: 'Where are we meeting today',
+  },
+  {
+    id: '2',
+    user: 'Other Teammate',
+    avatarUri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSeIUUwf1GuV6YhA08a9haUQBOBRqJinQCJxA&usqp=CAU',
+    text: 'Gonna be on campus all day today',
+  },
+  {
+    id: '3',
+    user: 'Other Other Teammate',
+    avatarUri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0BtGB_9GUsrrRqX2Wo4sgzHfh9LNmm4gkkQ&usqp=CAU',
+    text: 'Ditto! Lets meet at the library',
+  },
+  // Add more messages as needed
+];
