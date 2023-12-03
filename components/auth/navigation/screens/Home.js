@@ -1,16 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, ImageBackground, TextInput, TouchableOpacity, Image } from 'react-native';
+// import {HomeStackNavigator} from './HomeStackNavigator'; 
+// import MoodTracker from './MoodTracker';
 import { Card, Title, Paragraph } from 'react-native-paper';
 import { FIRESTORE_DB } from '../../../../App';
+import { HomeStackNavigator } from '../HomeStackNavigator';
+// import MoodTracker from './MoodTracker';
+import { View, Text, StyleSheet, ScrollView, ImageBackground, TextInput, TouchableOpacity, Image } from 'react-native';
 import { collection, query, getDocs, doc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore';
 
-export default function Home({ route }) {
+export default function Home({ route, navigation  }) {
   const [posts, setPosts] = useState([]);
   const [commentTexts, setCommentTexts] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const db = FIRESTORE_DB;
   const user = route.params?.user;
-  const [userName, setUserName] = useState('');
+  const [userName, setUserName] = useState(''); // State to store the user's name
+  // const onTrackMoodPress = () => {
+  //   navigation.navigate('MoodTracker');
+  // };
 
   const fetchUserName = async () => {
     try {
