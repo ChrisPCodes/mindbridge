@@ -1,5 +1,5 @@
-import * as React from 'react';
-import { StyleSheet, View, Text, ScrollView } from 'react-native';
+import * as React from 'react'
+import { StyleSheet, View, Text, ScrollView} from "react-native"
 import { NavigationContainer } from '@react-navigation/native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import Home from './screens/Home';
@@ -9,6 +9,7 @@ import QHG from './screens/QHG';
 import AddPostScreen from './screens/AddPostScreen';
 import { HomeStackNavigator } from './HomeStackNavigator';
 import Communitytopic from './screens/Communitytopic';
+import AddFriends from './screens/AddFriends';
 
 
 const Tab = createMaterialTopTabNavigator();
@@ -38,6 +39,7 @@ export default function Container({ route, navigation }) {
               initialParams={{ user }}
             />
             <Tab.Screen name="Community" component={Communitytopic} />
+            <Tab.Screen name="Add Friends" component={AddFriends} />
             <Tab.Screen
               name="Add Post"
               component={AddPostScreen}

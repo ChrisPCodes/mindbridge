@@ -63,7 +63,7 @@ export class Login extends Component {
         />
         <TouchableOpacity style = {styles.button}
             onPress ={()=> this.onLogIn()}>
-        <Text  style={styles.buttonText}  > Login </Text>
+        
         </TouchableOpacity>
 
           <TouchableOpacity

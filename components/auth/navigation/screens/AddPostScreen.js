@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, Image, TouchableOpacity, StyleSheet, ImageBackground, Keyboard } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ImageBackground, Keyboard } from 'react-native';
 import { FIRESTORE_DB } from '../../../../App';
-import { setDoc, doc, addDoc, collection, getDoc } from 'firebase/firestore';
+import { addDoc, collection, doc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore';
 
 export default function AddPostScreen({ route }) {
   const [postText, setPostText] = useState('');
   const [imageURI, setImageURI] = useState(null);
-  const [userName, setUserName] = useState(''); // State to store the user's name
+  const [userName, setUserName] = useState('');
 
   useEffect(() => {
     const fetchUserName = async () => {
@@ -32,16 +32,17 @@ export default function AddPostScreen({ route }) {
     try {
       const db = FIRESTORE_DB;
       const user = route.params?.user;
-      console.log("USER OBJECT FROM THE AddPostScreen", { user });
 
-      const docRef = addDoc(collection(db, 'posts'), {
+      const docRef = await addDoc(collection(db, 'posts'), {
         text: postText,
         imageURI: imageURI,
         userId: user.uid,
-        userDisplayName: userName, // Store the user's name in the post
+        userDisplayName: userName,
+        comments: [],
+        likes: [],
       });
 
-      console.log('Post created with ID: ', docRef);
+      console.log('Post created with ID: ', docRef.id);
       setPostText('');
       setImageURI(null);
     } catch (error) {
@@ -74,15 +75,6 @@ export default function AddPostScreen({ route }) {
           </View>
           <TouchableOpacity
             style={styles.button}
-            onPress={() => {
-              // Need to open the image picker and implement this
-              // and set the selected image URI to the state
-            }}
-          >
-            <Text style={styles.buttonText}>Select Image</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.button}
             onPress={handleCreatePost}
           >
             <Text style={styles.buttonText}>Post</Text>
@@ -92,6 +84,7 @@ export default function AddPostScreen({ route }) {
     </ImageBackground>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
