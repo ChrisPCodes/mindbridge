@@ -1,14 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, ImageBackground } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, ImageBackground, Button, TouchableOpacity} from 'react-native';
+// import {HomeStackNavigator} from './HomeStackNavigator'; 
+// import MoodTracker from './MoodTracker';
 import { Card, Title, Paragraph } from 'react-native-paper';
 import { FIRESTORE_DB } from '../../../../App';
 import { collection, query, getDocs, doc, getDoc } from 'firebase/firestore';
+import { HomeStackNavigator } from '../HomeStackNavigator';
+// import MoodTracker from './MoodTracker';
 
-export default function Home({ route }) {
+export default function Home({ route, navigation  }) {
   const [posts, setPosts] = useState([]);
   const db = FIRESTORE_DB;
   const user = route.params?.user;
   const [userName, setUserName] = useState(''); // State to store the user's name
+  // const onTrackMoodPress = () => {
+  //   navigation.navigate('MoodTracker');
+  // };
 
   // Function to fetch the user's name
   const fetchUserName = async () => {
@@ -68,6 +75,11 @@ export default function Home({ route }) {
       style={styles.container}
     >
       <Text style={styles.welcomeText}>Hello {userName || 'user'}, Welcome!</Text>
+      <Button 
+        title="Track your Mood"
+        onPress={()=> navigation.navigate('MoodTracker')}
+      />
+      
       <ScrollView>
         {posts.map((post, index) => (
           <Card key={index} style={styles.card}>
@@ -91,7 +103,7 @@ const styles = StyleSheet.create({
   welcomeText: {
     fontSize: 50,
     fontWeight: 'bold',
-    color: 'white',
+    color: 'black',
     margin: 20,
     marginBottom: 40,
   },

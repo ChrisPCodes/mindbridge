@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, ImageBackground, ScrollView, TouchableOpacity, Linking, SafeAreaView, Image, Modal, Pressable } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 
-export default function Settings({ navigation }) {
+export default function Communitytopic({ navigation }) {
     const cardsData = [
         {
             id: 1,
