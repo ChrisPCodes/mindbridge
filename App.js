@@ -103,11 +103,8 @@ export class App extends Component {
           <Stack.Screen name='MoodTracker' component={MoodTracker}/>
           <Stack.Screen name="MoodDetailsScreen" component={MoodDetailsScreen} />
           <Stack.Screen name="MoodSummaryScreen" component={MoodSummaryScreen} />
-          {/* <Stack.Screen name="verifyotp" component={VerifyOTP} />
-          <Stack.Screen name="OTPInfo" component={OTPEntry} /> */}
-
-
-          {/* <Stack.Screen name="MoodTracker" component={MoodTracker} /> */}
+       
+     
         </Stack.Navigator>  
 
         

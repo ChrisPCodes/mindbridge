@@ -10,7 +10,7 @@ import AddPostScreen from './screens/AddPostScreen';
 import { HomeStackNavigator } from './HomeStackNavigator';
 import Communitytopic from './screens/Communitytopic';
 import AddFriends from './screens/AddFriends';
-
+import MoodTracker from './screens/MoodTracker';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -38,6 +38,7 @@ export default function Container({ route, navigation }) {
               component={HomeStackNavigator}
               initialParams={{ user }}
             />
+             <Tab.Screen name="Track your Mood" component={MoodTracker} />
             <Tab.Screen name="Community" component={Communitytopic} />
             <Tab.Screen name="Add Friends" component={AddFriends} />
             <Tab.Screen

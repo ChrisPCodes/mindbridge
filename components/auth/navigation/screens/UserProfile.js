@@ -5,12 +5,15 @@ import UserProfileEdit from './UserProfileEdit';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FIREBASE_AUTH, FIRESTORE_DB } from '../../../../App';
 import { doc, getDoc } from 'firebase/firestore';
+import { Clipboard, Linking, TouchableOpacity } from 'react-native';
+
 
 export default function MoreOptions({ navigation }) {
   const [isEditMode, setIsEditMode] = useState(false);
   const [userInfo, setUserInfo] = useState({
-    username: 'John Doe',
-    bio: 'Front-End Developer',
+    username: 'Your Username',
+    bio: 'Your Bio',
+    discordId: 'Your Discord ID',
     followers: 1000,
     following: 500,
   });
@@ -62,6 +65,28 @@ export default function MoreOptions({ navigation }) {
   const handleCancelEdit = () => {
     setIsEditMode(false);
   };
+  const handleDiscordClick = async () => {
+    // Copy the Discord username to clipboard
+    Clipboard.setString(userInfo.discordId);
+  
+    // Try to open the Discord app (if installed)
+    const discordAppUrl = 'https://discord.gg/2cBVaNJP'; // Discord app URL scheme
+    const webUrl = 'https://discord.com/'; // Web URL as a fallback
+  
+    try {
+      // Attempt to open the Discord app
+      const supported = await Linking.canOpenURL(discordAppUrl);
+      if (supported) {
+        await Linking.openURL(discordAppUrl);
+      } else {
+        // If Discord app is not installed, open the web URL
+        await Linking.openURL(webUrl);
+      }
+    } catch (error) {
+      console.error('Error opening Discord app:', error);
+    }
+  };
+  
 
   const handleLike = (cardTitle) => {
     setLikeCounts((prevCounts) => ({
@@ -85,6 +110,14 @@ export default function MoreOptions({ navigation }) {
               <Card style={{ ...styles.profilecard, backgroundColor: 'rgba(204, 204, 255, 0.5)' }}>
                 <Card.Cover source={require('./random3.png')} style={{ ...styles.imagecard, opacity: 0.9 }} />
                 <Card.Content>
+                <View style={styles.bioContainer}>
+                <Paragraph style={{ fontStyle: 'italic', marginTop: 0, fontSize: 18 }}>
+                  
+                    </Paragraph>
+                    
+                    
+                  </View>
+
                   <View style={{ alignItems: 'center', marginTop: 20 }}>
                     <Title style={{ fontSize: 32, fontWeight: 'bold' }}>{userInfo.username}</Title>
                   </View>
@@ -95,14 +128,21 @@ export default function MoreOptions({ navigation }) {
                     </View>
                   </View>
                   <View style={{ alignItems: 'center' }}>
-                    <Paragraph style={{ fontStyle: 'italic', marginTop: 10, fontSize: 18 }}>{userInfo.bio}</Paragraph>
+                    <Paragraph style={{ fontStyle: 'italic', fontSize: 18 }}>{userInfo.bio}</Paragraph>
                   </View>
-                  <View style={{ alignItems: 'center', marginTop: 20 }}>
+                  <View style={{ alignItems: 'center',   }}>
                     <Button
                       title="Edit Profile"
                       onPress={handleEdit}
                       color="#ffffff"
+                      
                     />
+
+                      <TouchableOpacity onPress={handleDiscordClick}>
+                      <Text style={{  fontSize: 16, color: 'white', }}>
+                        Discord ID: {userInfo.discordId}
+                      </Text>
+                    </TouchableOpacity>
                   </View>
                 </Card.Content>
               </Card>
@@ -225,4 +265,14 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: '700',
   },
+
+  discordText:{
+    paddingLeft: 120,
+    fontSize: 16
+  },
+
+  profilecard:{
+
+    paddingBottom: 30
+  }
 });
