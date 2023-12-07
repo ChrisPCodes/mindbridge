@@ -19,6 +19,11 @@ export default function Home({ route, navigation  }) {
   //   navigation.navigate('MoodTracker');
   // };
 
+  console.log("FROM HOME USER & USER NAME ");
+  console.log(user);
+  
+
+
   const fetchUserName = async () => {
     try {
       const userDoc = doc(db, 'users', user.uid);
@@ -27,6 +32,7 @@ export default function Home({ route, navigation  }) {
       if (userDocSnapshot.exists()) {
         const userData = userDocSnapshot.data();
         setUserName(userData.name);
+        console.log(userName);
       }
     } catch (error) {
       console.error('Error fetching user name:', error);
@@ -112,12 +118,15 @@ export default function Home({ route, navigation  }) {
     );
   });
 
+  console.log("FROM HOME USER NAME NOT WORKING ANYMORE?????")
+  console.log(userName);
   return (
+
     <ImageBackground
       source={require('../../../../assets/background.png')}
       style={styles.container}
     >
-      <Text style={styles.welcomeText}>Hello {userName || 'user'}, Welcome!</Text>
+      <Text style={styles.welcomeText}>Hello {userName }, Welcome!</Text>
       <TextInput
         style={styles.searchInput}
         placeholder="Search post by name..."
