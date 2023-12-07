@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { StyleSheet, View, ImageBackground, ScrollView } from 'react-native';
 import { Card, Title, Paragraph } from 'react-native-paper';
+import { FontProvider } from '../../../../FontContext';
+import { FontContext } from '../../../../FontContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
 
 const disorders = [
   {
@@ -67,9 +70,23 @@ const disorders = [
 ];
 
 
-
 export default function QuickHelpGuide({ navigation }) {
+  
+  const { fontSize } = useContext(FontContext);
+
+  // Added dynamic styles for font size
+  const dynamicStyles = StyleSheet.create({
+    title: {
+      fontWeight: "bold",
+      fontSize: fontSize, // Directly set the font size
+    },
+    description: {
+      fontSize: fontSize, // Directly set the font size
+    },
+  });
+
   return (
+    <FontProvider>
     <ImageBackground source={require('./background2.png')} style={styles.container}>
       <ScrollView>
         {disorders.map((disorder, index) => (
@@ -77,13 +94,14 @@ export default function QuickHelpGuide({ navigation }) {
           <Card.Cover source={disorder.image} />
             {/* Use a smaller font size for descriptions */}
             <Card.Content>
-              <Title>{disorder.title}</Title>
-              <Paragraph style={styles.description}>{disorder.description}</Paragraph>
+              <Title style={{ ...dynamicStyles.title}}>{disorder.title}</Title>
+              <Paragraph style={{ ...dynamicStyles.description }}>{disorder.description}</Paragraph>
             </Card.Content>
           </Card>
         ))}
       </ScrollView>
     </ImageBackground>
+    </FontProvider>
   );
 }
 
@@ -94,8 +112,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   imagecard: {
-    width: 400,
-    height: 150,
+    width: 450, //changed from 400
+    height: 200, //changed from 150
     marginTop: 0,
     backgroundColor: '#CCCCFF',
     borderTopLeftRadius: 50,

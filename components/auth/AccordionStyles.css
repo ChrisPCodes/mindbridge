@@ -1,0 +1,91 @@
+/* AccordionStyles.css */
+
+* {
+    /* styling for the box of the accordion */
+    box-sizing: border-box;
+    margin: 0;
+    padding: 4px;
+    font-family: sans-serif;
+  }
+  
+  .App {
+    display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+    width: 100%;
+    min-height: 100vh;
+    background: #d6e1ff; /* background color */
+  }
+  
+  .Container {
+    /* container holds the answer or the info that is in the dropdown */
+    padding: 10px 10px;
+    background-color: lavenderblush;
+    height: auto;
+    width: 100%;
+    border-radius: 15px;
+    border: 2px solid rgb(168, 158, 207); 
+    font-size: italic;
+    
+  }
+  
+  .Container p {
+    /* container holds the answer or the info that is in the dropdown */
+    background-color: lavenderblush;
+  }
+  
+  .Accordion {
+    /* The accordion as it is pre-click */
+    font-size: medium;
+    width: 50%;  
+    justify-content: center;
+    margin-left: auto;
+    margin-right: auto;
+    }
+  
+  .AccordionHeading {
+    background-color: lavenderblush;
+    border: 2px solid rgb(168, 158, 207);
+    border-radius: 15px; /* Adjust the radius as per your preference */
+
+  }
+ 
+  .AccordionHeading p {
+    background-color: lavenderblush;
+
+    letter-spacing: 1.2px;
+    font-weight: 600;
+  }
+  
+  .AccordionHeading span { /*refers to the + or - sign*/
+    background-color: lavenderblush;
+    cursor: pointer;
+    border-radius: 15px; /* Adjust the radius as per your preference */
+
+  }
+  
+  .AccordionContent {
+    background-color: lavenderblush;
+    letter-spacing: 1.2px;
+    height: 0;
+    opacity: 0;
+    display: flex;
+    overflow: hidden;
+    transition: all 600ms ease-in-out;
+    border-radius: 15px; /* Adjust the radius */
+  }
+  
+  .AccordionContent .show {
+    background-color: lavenderblush;
+    border: 2px solid rgb(168, 158, 207);
+    height: 180px;
+  }
+  
+  .AccordionContent p {
+    background-color: lavenderblush;
+    border: 2px solid rgb(168, 158, 207);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  

@@ -15,6 +15,10 @@ const UserProfileEdit = ({ initialUserInfo, onSave, onCancel }) => {
     setUserInfo({ ...userInfo, bio: text });
   };
 
+
+  const handleDiscordIdChange = (text) => {
+    setUserInfo({ ...userInfo, discordId: text });
+  };
   const handleSave = () => {
     onSave(userInfo);
   };
@@ -37,6 +41,13 @@ const UserProfileEdit = ({ initialUserInfo, onSave, onCancel }) => {
           placeholder="Bio"
           value={userInfo.bio}
           onChangeText={handleBioChange}
+        />
+        {/* Add a new input field for Discord ID */}
+        <TextInput
+          style={styles.input}
+          placeholder="Discord ID"
+          value={userInfo.discordId}
+          onChangeText={handleDiscordIdChange}
         />
         <Button title="Save" onPress={handleSave} />
         <Button title="Cancel" onPress={onCancel} />
