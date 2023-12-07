@@ -1,10 +1,93 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, StyleSheet, ScrollView, ImageBackground, TextInput, TouchableOpacity, Image } from 'react-native';
 import { Card, Title, Paragraph } from 'react-native-paper';
 import { FIRESTORE_DB } from '../../../../App';
 import { collection, query, getDocs, doc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore';
+import { FontContext } from '../../../../FontContext';
+import { FontProvider } from '../../../../FontContext';
 
 export default function Home({ route }) {
+
+  const { fontSize } = useContext(FontContext);
+//add use context 
+
+const homeStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  Title : {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginTop: 10,
+    color: 'black',
+    fontSize : fontSize,
+  },  
+  
+  commentUser : {
+    fontSize: 16,
+    fontWeight: 'bold',
+    fontSize :  fontSize,
+  },
+
+  commentTitle : {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginTop: 10,
+    fontSize :  fontSize,
+  },  
+  commentText : {
+    fontSize: 16,
+    fontSize : fontSize,
+  },
+ 
+  commentInput : {
+    width: '100%',
+    height: 40,
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 20,
+    padding: 10,
+    marginTop: 10,
+    backgroundColor: 'white',
+    fontSize:fontSize,
+  },
+  welcomeText: {
+    fontSize: 20 + fontSize,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    fontSize: fontSize,
+  },
+
+  contentText: {
+    fontSize: fontSize,
+    textAlign: 'center',
+  },
+  commentButtonText: {
+    color: 'black',
+    fontSize: 16,
+    fontWeight: 'bold',
+    fontSize:  fontSize,
+
+  },
+
+  searchInput: {
+  width: '100%',
+  height: 30, // Adjusted the height
+  borderWidth: 1,
+  borderColor: 'gray',
+  borderRadius: 20,
+  padding: 10,
+  marginTop: 10,
+  marginBottom: 20, // Added more space between the search bar and the posts
+  backgroundColor: 'white',
+  fontSize: fontSize,
+
+  },
+
+});
   const [posts, setPosts] = useState([]);
   const [commentTexts, setCommentTexts] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -106,13 +189,14 @@ export default function Home({ route }) {
   });
 
   return (
+    <FontProvider>
     <ImageBackground
       source={require('../../../../assets/background.png')}
       style={styles.container}
     >
-      <Text style={styles.welcomeText}>Hello {userName || 'user'}, Welcome!</Text>
+      <Text style={homeStyles.welcomeText}>Hello {userName || 'user'}, Welcome!</Text>
       <TextInput
-        style={styles.searchInput}
+        style={homeStyles.searchInput}
         placeholder="Search by user name..."
         value={searchQuery}
         onChangeText={setSearchQuery}
@@ -121,15 +205,15 @@ export default function Home({ route }) {
         {filteredPosts.map((post, index) => (
           <Card key={index} style={styles.card}>
             <Card.Content>
-              <Title style={styles.Title}>{post.userDisplayName}</Title>
+              <Title style={homeStyles.Title}>{post.userDisplayName}</Title>
               <Paragraph>{post.text}</Paragraph>
               {post.comments && post.comments.length > 0 && (
                 <View>
-                  <Text style={styles.commentTitle}>Comments:</Text>
+                  <Text style={homeStyles.commentTitle}>Comments:</Text>
                   {post.comments.map((comment, commentIndex) => (
                     <View key={commentIndex} style={styles.comment}>
-                      <Text style={styles.commentUser}>{comment.userDisplayName}:</Text>
-                      <Text style={styles.commentText}>{comment.text}</Text>
+                      <Text style={homeStyles.commentUser}>{comment.userDisplayName}:</Text>
+                      <Text style={homeStyles.commentText}>{comment.text}</Text>
                     </View>
                   ))}
                 </View>
@@ -142,7 +226,7 @@ export default function Home({ route }) {
               </TouchableOpacity>
               <Text style={styles.likesCount}>{post.likes.length} Likes</Text>
               <TextInput
-                style={styles.commentInput}
+                style={homeStyles.commentInput}
                 placeholder="Add a comment..."
                 value={commentTexts[index]}
                 onChangeText={(text) => {
@@ -155,13 +239,14 @@ export default function Home({ route }) {
                 style={styles.commentButton}
                 onPress={() => handleAddComment(post.id, index)}
               >
-                <Text style={styles.commentButtonText}>Add Comment</Text>
+                <Text style={homeStyles.commentButtonText}>Add Comment</Text>
               </TouchableOpacity>
             </Card.Content>
           </Card>
         ))}
       </ScrollView>
     </ImageBackground>
+    </FontProvider>
   );
 }
 

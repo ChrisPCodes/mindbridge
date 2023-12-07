@@ -5,7 +5,6 @@ import { StyleSheet, View, Text } from "react-native"
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Home from './screens/Home';
-import Setting from './screens/Setting';
 import UserProfile from './screens/UserProfile';
 import QHG from './screens/QHG'
 import AddPostScreen from './screens/AddPostScreen'; 
@@ -26,7 +25,6 @@ export default function Container({route,navigation}){
                 <Tab.Screen name="Home" component={Home} 
                 initialParams={{ user }} // Pass user as a parameter
                 />
-                <Tab.Screen name="Setting" component={Setting} />
                 <Tab.Screen name="Add Post" component={AddPostScreen}
                 initialParams={{ user }} // Pass user as a parameter
                 />
