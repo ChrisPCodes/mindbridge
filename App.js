@@ -37,6 +37,13 @@ import AboutScreen from './components/auth/About';
 import FAQ from './components/auth/Faq';
 import UsageTutorial from './components/auth/UsageTutorial';
 
+import MoodTracker from './components/auth/navigation/screens/MoodTracker';
+import Home from './components/auth/navigation/screens/Home';
+import { HomeStackNavigator } from './components/auth/navigation/HomeStackNavigator';
+import MoodDetailsScreen from './components/auth/navigation/screens/MoodDetailsScreen';
+import MoodSummaryScreen from './components/auth/navigation/screens/MoodSummaryScreen';
+// import VerifyOTP from './components/auth/verifyotp';
+// import OTPEntry from './components/auth/otpentry'
 const Stack = createNativeStackNavigator();
 const auth = FIREBASE_AUTH;
 
@@ -98,7 +105,16 @@ export class App extends Component {
           <Stack.Screen name ="FAQ" component          ={FAQ}/>
           <Stack.Screen name ="UsageTutorial" component          ={UsageTutorial}/>
           
+          <Stack.Screen name="HomeScreen" component={Home} />
+          <Stack.Screen name = "HomeStackNavigator" component={HomeStackNavigator}/>
+          <Stack.Screen name='MoodTracker' component={MoodTracker}/>
+          <Stack.Screen name="MoodDetailsScreen" component={MoodDetailsScreen} />
+          <Stack.Screen name="MoodSummaryScreen" component={MoodSummaryScreen} />
+       
+     
         </Stack.Navigator>  
+
+        
       </NavigationContainer>
       </FontProvider>
     );

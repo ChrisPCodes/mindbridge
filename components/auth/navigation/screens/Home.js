@@ -1,99 +1,30 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, StyleSheet, ScrollView, ImageBackground, TextInput, TouchableOpacity, Image } from 'react-native';
+// import {HomeStackNavigator} from './HomeStackNavigator'; 
+// import MoodTracker from './MoodTracker';
 import { Card, Title, Paragraph } from 'react-native-paper';
 import { FIRESTORE_DB } from '../../../../App';
+import { HomeStackNavigator } from '../HomeStackNavigator';
+// import MoodTracker from './MoodTracker';
 import { collection, query, getDocs, doc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { FontContext } from '../../../../FontContext';
 import { FontProvider } from '../../../../FontContext';
 
-export default function Home({ route }) {
-
-  const { fontSize } = useContext(FontContext);
-//add use context 
-
-const homeStyles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  Title : {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginTop: 10,
-    color: 'black',
-    fontSize : fontSize,
-  },  
-  
-  commentUser : {
-    fontSize: 16,
-    fontWeight: 'bold',
-    fontSize :  fontSize,
-  },
-
-  commentTitle : {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginTop: 10,
-    fontSize :  fontSize,
-  },  
-  commentText : {
-    fontSize: 16,
-    fontSize : fontSize,
-  },
- 
-  commentInput : {
-    width: '100%',
-    height: 40,
-    borderWidth: 1,
-    borderColor: 'gray',
-    borderRadius: 20,
-    padding: 10,
-    marginTop: 10,
-    backgroundColor: 'white',
-    fontSize:fontSize,
-  },
-  welcomeText: {
-    fontSize: 20 + fontSize,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    fontSize: fontSize,
-  },
-
-  contentText: {
-    fontSize: fontSize,
-    textAlign: 'center',
-  },
-  commentButtonText: {
-    color: 'black',
-    fontSize: 16,
-    fontWeight: 'bold',
-    fontSize:  fontSize,
-
-  },
-
-  searchInput: {
-  width: '100%',
-  height: 30, // Adjusted the height
-  borderWidth: 1,
-  borderColor: 'gray',
-  borderRadius: 20,
-  padding: 10,
-  marginTop: 10,
-  marginBottom: 20, // Added more space between the search bar and the posts
-  backgroundColor: 'white',
-  fontSize: fontSize,
-
-  },
-
-});
+export default function Home({ route, navigation  }) {
   const [posts, setPosts] = useState([]);
   const [commentTexts, setCommentTexts] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const db = FIRESTORE_DB;
   const user = route.params?.user;
-  const [userName, setUserName] = useState('');
+  const [userName, setUserName] = useState(''); // State to store the user's name
+  // const onTrackMoodPress = () => {
+  //   navigation.navigate('MoodTracker');
+  // };
+
+  console.log("FROM HOME USER & USER NAME ");
+  console.log(user);
+  
+
 
   const fetchUserName = async () => {
     try {
@@ -103,6 +34,7 @@ const homeStyles = StyleSheet.create({
       if (userDocSnapshot.exists()) {
         const userData = userDocSnapshot.data();
         setUserName(userData.name);
+        console.log(userName);
       }
     } catch (error) {
       console.error('Error fetching user name:', error);
@@ -188,16 +120,98 @@ const homeStyles = StyleSheet.create({
     );
   });
 
+  console.log("FROM HOME USER NAME NOT WORKING ANYMORE?????")
+  console.log(userName);
+  const { fontSize } = useContext(FontContext);
+//add use context 
+
+const homeStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  Title : {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginTop: 10,
+    color: 'black',
+    fontSize : fontSize,
+  },  
+  
+  commentUser : {
+    fontSize: 16,
+    fontWeight: 'bold',
+    fontSize :  fontSize,
+  },
+
+  commentTitle : {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginTop: 10,
+    fontSize :  fontSize,
+  },  
+  commentText : {
+    fontSize: 16,
+    fontSize : fontSize,
+  },
+ 
+  commentInput : {
+    width: '100%',
+    height: 40,
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 20,
+    padding: 10,
+    marginTop: 10,
+    backgroundColor: 'white',
+    fontSize:fontSize,
+  },
+  welcomeText: {
+    fontSize: 20 + fontSize,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    fontSize: fontSize,
+  },
+
+  contentText: {
+    fontSize: fontSize,
+    textAlign: 'center',
+  },
+  commentButtonText: {
+    color: 'black',
+    fontSize: 16,
+    fontWeight: 'bold',
+    fontSize:  fontSize,
+
+  },
+
+  searchInput: {
+  width: '100%',
+  height: 30, // Adjusted the height
+  borderWidth: 1,
+  borderColor: 'gray',
+  borderRadius: 20,
+  padding: 10,
+  marginTop: 10,
+  marginBottom: 20, // Added more space between the search bar and the posts
+  backgroundColor: 'white',
+  fontSize: fontSize,
+
+  },
+
+});
   return (
     <FontProvider>
     <ImageBackground
       source={require('../../../../assets/background.png')}
       style={styles.container}
     >
-      <Text style={homeStyles.welcomeText}>Hello {userName || 'user'}, Welcome!</Text>
+      <Text style={styles.welcomeText}>Hello {userName }, Welcome!</Text>
       <TextInput
-        style={homeStyles.searchInput}
-        placeholder="Search by user name..."
+        style={styles.searchInput}
+        placeholder="Search post by name..."
         value={searchQuery}
         onChangeText={setSearchQuery}
       />
@@ -279,7 +293,7 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   card: {
-    width: 400,
+    width: 380,
     marginVertical: 10,
     height: 'auto',
   },
@@ -323,8 +337,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   searchInput: {
-    width: '100%',
-    height: 30, // Adjusted the height
+    width: '90%',
+    height: 40, // Adjusted the height
     borderWidth: 1,
     borderColor: 'gray',
     borderRadius: 20,
