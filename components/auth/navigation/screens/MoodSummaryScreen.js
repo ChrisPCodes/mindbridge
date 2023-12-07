@@ -78,7 +78,9 @@ export default function MoodSummaryScreen({ route, navigation }) {
                     onPress={getRandomSuggestion}
                 >
                     <Text style={styles.suggestionText}>Click for a Random Suggestion.  </Text>
-                    <Text style={styles.suggestionText}>Take a Screenshot and Remember this day for what it taught you.</Text>
+                    <Text style={styles.suggestionText}>Take a Screenshot and Remember this day for what it taught you. </Text>
+                    <Text style={styles.suggestionText}>   </Text>
+                    <Text style={styles.suggestionText}>YOU SHOULD:  </Text>
                 </TouchableOpacity>
                 
                 {/* Display the random suggestion */}
