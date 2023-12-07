@@ -1,7 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, ImageBackground, Button, ScrollView, Text } from 'react-native';
+//Avlokita's work
+
+import React, { useState, useEffect, useContext } from 'react';
+import { StyleSheet, View, ImageBackground, Button, ScrollView, Text, TextInput } from 'react-native';
 import { Card, Title, Paragraph } from 'react-native-paper';
 import UserProfileEdit from './UserProfileEdit';
+import { FontProvider } from '../../../../FontContext';
+import { FontContext } from '../../../../FontContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FIREBASE_AUTH, FIRESTORE_DB } from '../../../../App';
 import { doc, getDoc } from 'firebase/firestore';
@@ -9,6 +13,36 @@ import { Clipboard, Linking, TouchableOpacity } from 'react-native';
 
 
 export default function MoreOptions({ navigation }) {
+
+  const { fontSize } = useContext(FontContext);
+  
+  const dynamicStyles = StyleSheet.create({
+    title: {
+      fontSize: fontSize,
+      fontWeight: 'bold',
+    },
+    followers: {
+      fontSize: fontSize,
+      alignContent: 'center',
+      // fontWeight: 'bold',
+    },
+
+    following: {
+      fontSize: fontSize,
+      alignContent: 'center',
+
+    },
+    bio: {
+      fontSize: fontSize,
+      fontStyle: 'italic',
+      marginTop: 5,
+    },
+    // buttonText: {
+    //   fontSize: fontSize,
+    //   marginRight: 10,
+    // },
+  });
+
   const [isEditMode, setIsEditMode] = useState(false);
   const [userInfo, setUserInfo] = useState({
     username: 'Your Username',
@@ -16,7 +50,9 @@ export default function MoreOptions({ navigation }) {
     discordId: 'Your Discord ID',
     followers: 1000,
     following: 500,
+    isPrivate: false, // isPrivate value if user wants to enable privacy settings
   });
+
   const [likeCounts, setLikeCounts] = useState({
     card1: 0,
     card2: 0,
@@ -96,6 +132,7 @@ export default function MoreOptions({ navigation }) {
   };
 
   return (
+    <FontProvider>
     <ImageBackground source={require('./background2.png')} style={styles.container}>
       <ScrollView>
         {isEditMode ? (
@@ -119,23 +156,26 @@ export default function MoreOptions({ navigation }) {
                   </View>
 
                   <View style={{ alignItems: 'center', marginTop: 20 }}>
-                    <Title style={{ fontSize: 32, fontWeight: 'bold' }}>{userInfo.username}</Title>
+                    <Title style={{ ...dynamicStyles.title }}>{userInfo.username}</Title>
                   </View>
                   <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
                     <View>
-                      <Text style={{ fontWeight: 'bold', fontSize: 18,  marginLeft: 155 }}>Friends</Text>
-                      <Text style={{ color:'white', fontSize: 23, fontWeight: 'bold', marginLeft: 175 }}>{friendsListSize}</Text>
+                      <Text style={{ fontSize: 23, fontWeight: 'bold', marginLeft: 60 }}>{userInfo.followers}</Text>
+                      <Text style={{ fontSize: 13, marginLeft: 60 }}>Followers</Text>
+                    </View>
+                    <View style={{ marginLeft: 130 }}>
+                      <Text style={{ fontSize: 23, fontWeight: 'bold' }}>{userInfo.following}</Text>
+                      <Text style={{ fontSize: 13 }}>Following</Text>
                     </View>
                   </View>
                   <View style={{ alignItems: 'center' }}>
-                    <Paragraph style={{ fontStyle: 'italic', fontSize: 18 }}>{userInfo.bio}</Paragraph>
+                    <Paragraph style={{ fontStyle: 'italic', marginTop: 10, fontSize: 18 }}>{userInfo.bio}</Paragraph>
                   </View>
-                  <View style={{ alignItems: 'center',   }}>
+                  <View style={{ alignItems: 'center', marginTop: 20 }}>
                     <Button
                       title="Edit Profile"
                       onPress={handleEdit}
                       color="#ffffff"
-                      
                     />
 
                       <TouchableOpacity onPress={handleDiscordClick}>
@@ -213,7 +253,8 @@ export default function MoreOptions({ navigation }) {
         </Card>
       </ScrollView>
     </ImageBackground>
-  );
+    </FontProvider>
+    );
 }
 
 const styles = StyleSheet.create({

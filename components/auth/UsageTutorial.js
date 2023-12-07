@@ -1,60 +1,60 @@
 import React, { useState, useEffect } from 'react';
-import { View, Image, StyleSheet } from 'react-native';
+import { Image, StyleSheet } from 'react-native';
 import Accordion from './Accordion.js';
 import { FIRESTORE_DB } from '../../App.js';
 import { collection, getDocs, onSnapshot } from 'firebase/firestore';
 
-export default function Faq() {
-  const [faqs, setFaqs] = useState([]);
+export default function UsageTutorial() {
+  const [tutorialSteps, setTutorialSteps] = useState([]);
   const [answers, setAnswers] = useState({});
   const [active, setActive] = useState(null);
 
   useEffect(() => {
-    const fetchFaqs = async () => {
+    const fetchTutorialSteps = async () => {
       try {
         const firestore = FIRESTORE_DB;
-        const faqsCollection = collection(firestore, 'faqs');
+        const tutorialCollection = collection(firestore, 'usageTutorial');
 
         // Subscribe to real-time updates
-        const unsubscribe = onSnapshot(faqsCollection, (querySnapshot) => {
-          const faqsData = [];
+        const unsubscribe = onSnapshot(tutorialCollection, (querySnapshot) => {
+          const tutorialData = [];
           const answersData = {};
 
           querySnapshot.forEach((doc) => {
             const { question, answer } = doc.data();
-            faqsData.push({ question, answer });
-            answersData[question] = answer;
+            tutorialData.push({ question, answer });
+            answersData[question] = answer;  // Populate the answers object
           });
 
-          setFaqs(faqsData);
-          setAnswers(answersData);
+          setTutorialSteps(tutorialData);
+          setAnswers(answersData);  // Set the answers state
         });
 
         // Clean up the listener when the component unmounts
         return () => unsubscribe();
       } catch (error) {
-        console.error('Error fetching or adding FAQs:', error);
+        console.error('Error fetching or adding Usage Tutorial steps:', error);
       }
     };
 
-    fetchFaqs();
+    fetchTutorialSteps();
   }, []);
 
   return (
-    <div className="App">
+    <div className='App'>
       <Image
         source={require('../../assets/register_hug.png')}
         style={styles.Image}
       />
 
-      {faqs.length > 0 &&
-        faqs.map((faq, index) => (
+      {tutorialSteps.length > 0 &&
+        tutorialSteps.map((step, index) => (
           <Accordion
             key={index}
-            title={faq.question}
+            title={step.question}
+            answers={answers}  // Pass the answers state
             active={active}
             setActive={setActive}
-            answers={answers}
           />
         ))}
     </div>
@@ -68,5 +68,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 50,
     width: 400,
     height: 400,
+    marginTop: 40,
+    justifyContent: 'center',
   },
 });

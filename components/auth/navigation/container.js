@@ -3,7 +3,6 @@ import { StyleSheet, View, Text, ScrollView} from "react-native"
 import { NavigationContainer } from '@react-navigation/native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import Home from './screens/Home';
-import Setting from './screens/Setting';
 import UserProfile from './screens/UserProfile';
 import QHG from './screens/QHG';
 import AddPostScreen from './screens/AddPostScreen';

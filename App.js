@@ -3,6 +3,8 @@ import { View, Text,TouchableOpacity } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {styles} from './Styles'
+import { FontProvider } from './FontContext';
+
 
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
@@ -33,6 +35,8 @@ import ForgotPassword from './components/auth/ForgotPass';
 import Container from './components/auth/navigation/container';
 import AboutScreen from './components/auth/About';
 import FAQ from './components/auth/Faq';
+import UsageTutorial from './components/auth/UsageTutorial';
+
 import MoodTracker from './components/auth/navigation/screens/MoodTracker';
 import Home from './components/auth/navigation/screens/Home';
 import { HomeStackNavigator } from './components/auth/navigation/HomeStackNavigator';
@@ -89,6 +93,7 @@ export class App extends Component {
     // Todo Switch off once sign out is implemented 
     // <Stack.Navigator initialRouteName={loggedIn ? 'Container': 'Landing'}>
     return (
+      <FontProvider>
       <NavigationContainer>
         <Stack.Navigator initialRouteName={'Landing'}>
           <Stack.Screen name ="Landing" component        = {LandingScreen} options={{headerShown:false}}/>
@@ -98,6 +103,8 @@ export class App extends Component {
           <Stack.Screen name ="ForgotPassword" component = {ForgotPassword}/>
           <Stack.Screen name ="About" component          ={AboutScreen}/>
           <Stack.Screen name ="FAQ" component          ={FAQ}/>
+          <Stack.Screen name ="UsageTutorial" component          ={UsageTutorial}/>
+          
           <Stack.Screen name="HomeScreen" component={Home} />
           <Stack.Screen name = "HomeStackNavigator" component={HomeStackNavigator}/>
           <Stack.Screen name='MoodTracker' component={MoodTracker}/>
@@ -109,10 +116,9 @@ export class App extends Component {
 
         
       </NavigationContainer>
+      </FontProvider>
     );
-  
 }
 }
 
 export default App;
-

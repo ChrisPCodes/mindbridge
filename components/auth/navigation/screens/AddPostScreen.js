@@ -1,9 +1,61 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ImageBackground, Keyboard } from 'react-native';
 import { FIRESTORE_DB } from '../../../../App';
 import { addDoc, collection, doc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore';
+import { FontProvider } from '../../../../FontContext';
+import { FontContext } from '../../../../FontContext';
+
 
 export default function AddPostScreen({ route }) {
+
+  const { fontSize } = useContext(FontContext); //add use context
+
+  const dynamicStyles = StyleSheet.create({
+    title: {
+      fontSize: fontSize,
+      fontWeight: 'bold',
+      color: 'black',
+      margin: 50,
+    },
+    
+    button: {
+      width: 200,
+      height: 40,
+      borderRadius: 20,
+      backgroundColor: 'white',
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginTop: 10,
+      fontSize: fontSize,
+    },
+    buttonText: {
+      color: 'black',
+      fontSize:  fontSize,
+      fontWeight: '400'},
+
+    textInputContainer: {
+      width: '100%',
+      position: 'relative',
+      fontSize: fontSize
+    
+    },
+    input: {
+    width: '100%',
+    height: 100,
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 20,
+    padding: 20,
+    marginBottom: 10,
+    marginRight: 100,
+    backgroundColor: 'white',
+    color: 'black',
+    fontSize: fontSize
+    
+    },
+
+  });
+
   const [postText, setPostText] = useState('');
   const [imageURI, setImageURI] = useState(null);
   const [userName, setUserName] = useState('');
@@ -51,16 +103,17 @@ export default function AddPostScreen({ route }) {
   };
 
   return (
+    <FontProvider> 
     <ImageBackground
       source={require('../../../../assets/background.png')}
       style={{ flex: 1 }}
     >
       <>
         <TouchableOpacity activeOpacity={1} style={styles.container} onPress={Keyboard.dismiss}>
-          <Text style={styles.title}>Add post!</Text>
-          <View style={styles.textInputContainer}>
+          <Text style={dynamicStyles.title}>Add post!</Text>
+          <View style={dynamicStyles.textInputContainer}>
             <TextInput
-              style={styles.input}
+              style={dynamicStyles.input}
               placeholder="What's on your mind?"
               value={postText}
               onChangeText={(text) => setPostText(text)}
@@ -74,15 +127,16 @@ export default function AddPostScreen({ route }) {
             />
           </View>
           <TouchableOpacity
-            style={styles.button}
+            style={dynamicStyles.button}
             onPress={handleCreatePost}
           >
-            <Text style={styles.buttonText}>Post</Text>
+            <Text style={dynamicStyles.buttonText}>Post</Text>
           </TouchableOpacity>
         </TouchableOpacity>
       </>
     </ImageBackground>
-  );
+    </FontProvider>
+  ); //add font provider
 }
 
 
