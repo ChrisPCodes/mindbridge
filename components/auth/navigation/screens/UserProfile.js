@@ -12,7 +12,38 @@ import { doc, getDoc } from 'firebase/firestore';
 import { Clipboard, Linking, TouchableOpacity } from 'react-native';
 
 
-export default function MoreOptions({ navigation }) {
+export default function MoreOptions({ route, navigation }) {
+  const [userName, setUserName] = useState(''); // State to store the user's name
+  const user = route.params?.user;
+  const userUID = user.uid;
+  console.log("FROM THE USER PROFILE LOGG")
+  console.log(userUID)
+
+  useEffect(() => {
+    const fetchUserName = async () => {
+      try {
+        // Reference to the user document in Firestore using the UID
+        const userDocRef = doc(db, 'users', userUID);
+
+        // Fetch the user document
+        const userDoc = await getDoc(userDocRef);
+
+        if (userDoc.exists()) {
+          // If the document exists, update the state with the user's name
+          const userName = userDoc.data().name;
+          setUserName(userName);
+        }
+      } catch (error) {
+        console.error('Error fetching user name:', error);
+      }
+    };
+
+    fetchUserName();
+  }, [userUID]); // Run when the component mounts or when userUID changes
+
+  console.log("NAME FROM THE USER  PROFILE");
+  console.log(userName);
+
 
   const { fontSize } = useContext(FontContext);
   
@@ -45,11 +76,9 @@ export default function MoreOptions({ navigation }) {
 
   const [isEditMode, setIsEditMode] = useState(false);
   const [userInfo, setUserInfo] = useState({
-    username: 'Your Username',
+    username: "Placeholder",
     bio: 'Your Bio',
     discordId: 'Your Discord ID',
-    followers: 1000,
-    following: 500,
     isPrivate: false, // isPrivate value if user wants to enable privacy settings
   });
 
@@ -149,28 +178,18 @@ export default function MoreOptions({ navigation }) {
                 <Card.Content>
                 <View style={styles.bioContainer}>
                 <Paragraph style={{ fontStyle: 'italic', marginTop: 0, fontSize: 18 }}>
-                  
                     </Paragraph>
-                    
-                    
-                  </View>
+                    </View>
 
-                  <View style={{ alignItems: 'center', marginTop: 20 }}>
-                    <Title style={{ ...dynamicStyles.title }}>{userInfo.username}</Title>
-                  </View>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
-                    <View>
-                      <Text style={{ fontSize: 23, fontWeight: 'bold', marginLeft: 60 }}>{userInfo.followers}</Text>
-                      <Text style={{ fontSize: 13, marginLeft: 60 }}>Followers</Text>
-                    </View>
-                    <View style={{ marginLeft: 130 }}>
-                      <Text style={{ fontSize: 23, fontWeight: 'bold' }}>{userInfo.following}</Text>
-                      <Text style={{ fontSize: 13 }}>Following</Text>
-                    </View>
-                  </View>
-                  <View style={{ alignItems: 'center' }}>
-                    <Paragraph style={{ fontStyle: 'italic', marginTop: 10, fontSize: 18 }}>{userInfo.bio}</Paragraph>
-                  </View>
+              <View style={{ alignItems: 'center', marginTop: 20 }}>
+                <Title style={{ fontSize: 32, fontWeight: 'bold' }}>{userName}</Title>
+              </View>
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
+                <View>
+                  <Text style={{ fontWeight: 'bold', fontSize: 18,  marginLeft: 155 }}>Friends</Text>
+                  <Text style={{ color:'white', fontSize: 23, fontWeight: 'bold', marginLeft: 175 }}>{friendsListSize}</Text>
+                </View>
+              </View>
                   <View style={{ alignItems: 'center', marginTop: 20 }}>
                     <Button
                       title="Edit Profile"

@@ -8,6 +8,9 @@ import { FontContext } from '../../../../FontContext';
 
 export default function AddPostScreen({ route }) {
 
+  console.log("FROM POST SCREEN FOR TESTING THE HOME PAGE:")
+  const user = route.params?.user;
+  console.log(user);
   const { fontSize } = useContext(FontContext); //add use context
 
   const dynamicStyles = StyleSheet.create({

@@ -10,7 +10,7 @@ import { collection, query, getDocs, doc, getDoc, updateDoc, arrayUnion } from '
 import { FontContext } from '../../../../FontContext';
 import { FontProvider } from '../../../../FontContext';
 
-export default function Home({ route, navigation  }) {
+export default function Home({ route, navigation}) {
   const [posts, setPosts] = useState([]);
   const [commentTexts, setCommentTexts] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -23,7 +23,6 @@ export default function Home({ route, navigation  }) {
 
   console.log("FROM HOME USER & USER NAME ");
   console.log(user);
-  
 
 
   const fetchUserName = async () => {

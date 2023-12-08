@@ -34,7 +34,7 @@ export default function Container({ route, navigation }) {
           >
             <Tab.Screen
               name="Home"
-              component={HomeStackNavigator}
+              component={Home}
               initialParams={{ user }}
             />
              <Tab.Screen name="Track your Mood" component={MoodTracker} />
@@ -45,7 +45,7 @@ export default function Container({ route, navigation }) {
               component={AddPostScreen}
               initialParams={{ user }}
             />
-            <Tab.Screen name="User Profile" component={UserProfile} />
+            <Tab.Screen name="User Profile" component={UserProfile} initialParams={{user}}/>
             <Tab.Screen name="Quick Help Guide" component={QHG} />
           </Tab.Navigator>
         </ScrollView>

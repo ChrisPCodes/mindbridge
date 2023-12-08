@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import './AccordionStyles.css';
+//import './AccordionStyles.css';
 
 const Accordion = ({answers,title, active, setActive}) => { //creating a dynamic accordion for Q/As
    console.log(active, answers);
