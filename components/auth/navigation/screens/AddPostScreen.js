@@ -4,7 +4,7 @@ import { FIRESTORE_DB } from '../../../../App';
 import { addDoc, collection, doc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { FontProvider } from '../../../../FontContext';
 import { FontContext } from '../../../../FontContext';
-
+import { Switch } from 'react-native';
 
 export default function AddPostScreen({ route }) {
 
@@ -12,6 +12,12 @@ export default function AddPostScreen({ route }) {
   const user = route.params?.user;
   console.log(user);
   const { fontSize } = useContext(FontContext); //add use context
+  const [nightMode, setNightMode] = useState(false);
+
+  const toggleNightMode = () => {
+    setNightMode(previousState => !previousState);
+  };
+  
 
   const dynamicStyles = StyleSheet.create({
     title: {
@@ -108,10 +114,20 @@ export default function AddPostScreen({ route }) {
   return (
     <FontProvider> 
     <ImageBackground
-      source={require('../../../../assets/background.png')}
+      source={nightMode ? require('../../../../assets/black.png') 
+    : require('../../../../assets/background.png')}
       style={{ flex: 1 }}
     >
       <>
+      <View style={styles.toggleContainer}>
+        <Text style={styles.toggleLabel}>Night Mode</Text>
+        <Switch
+          value={nightMode}
+          onValueChange={toggleNightMode}
+          trackColor={{ false: '#767577', true: '#81b0ff' }}
+          thumbColor={nightMode ? '#f5dd4b' : '#f4f3f4'}
+        />
+      </View>
         <TouchableOpacity activeOpacity={1} style={styles.container} onPress={Keyboard.dismiss}>
           <Text style={dynamicStyles.title}>Add post!</Text>
           <View style={dynamicStyles.textInputContainer}>
@@ -193,5 +209,16 @@ const styles = StyleSheet.create({
     color: 'black',
     fontSize: 18,
     fontWeight: 400,
+  },
+  toggleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 40, 
+  },
+  toggleLabel: {
+    fontSize: 16,
+    color: 'black',
+    marginRight: 10,
   },
 });

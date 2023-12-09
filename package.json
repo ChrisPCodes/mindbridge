@@ -30,7 +30,7 @@
     "paper": "^0.12.17",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-native": "0.71.14",
+    "react-native": "^0.71.14",
     "react-native-gesture-handler": "~2.9.0",
     "react-native-lottie": "^0.0.1-alpha.2",
     "react-native-pager-view": "6.1.2",

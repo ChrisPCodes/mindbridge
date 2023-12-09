@@ -9,6 +9,9 @@ import { HomeStackNavigator } from '../HomeStackNavigator';
 import { collection, query, getDocs, doc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { FontContext } from '../../../../FontContext';
 import { FontProvider } from '../../../../FontContext';
+import { Switch } from 'react-native'; 
+
+
 
 export default function Home({ route, navigation}) {
   const [posts, setPosts] = useState([]);
@@ -24,6 +27,12 @@ export default function Home({ route, navigation}) {
   console.log("FROM HOME USER & USER NAME ");
   console.log(user);
 
+  const [nightMode, setNightMode] = useState(false); // State for night mode toggle
+  
+  const toggleNightMode = () => {
+    setNightMode((prevMode) => !prevMode);
+  };
+  
 
   const fetchUserName = async () => {
     try {
@@ -201,10 +210,14 @@ const homeStyles = StyleSheet.create({
   },
 
 });
+
+
   return (
     <FontProvider>
     <ImageBackground
-      source={require('../../../../assets/background.png')}
+    
+    source={nightMode ? require('../../../../assets/black.png') 
+    : require('../../../../assets/background.png')}
       style={styles.container}
     >
       <Text style={styles.welcomeText}>Hello {userName }, Welcome!</Text>
@@ -214,6 +227,17 @@ const homeStyles = StyleSheet.create({
         value={searchQuery}
         onChangeText={setSearchQuery}
       />
+
+<View style={homeStyles.toggleContainer}>
+              <Text style={homeStyles.toggleLabel}>Night Mode</Text>
+              <Switch
+                value={nightMode}
+                onValueChange={() => setNightMode((prevMode) => !prevMode)}
+                trackColor={{ false: '#767577', true: '#81b0ff' }}
+                thumbColor={nightMode ? '#f5dd4b' : '#f4f3f4'}
+              />
+            </View>
+
       <ScrollView style={styles.postsContainer}>
         {filteredPosts.map((post, index) => (
           <Card key={index} style={styles.card}>
@@ -248,6 +272,7 @@ const homeStyles = StyleSheet.create({
                   setCommentTexts(updatedCommentTexts);
                 }}
               />
+
               <TouchableOpacity
                 style={styles.commentButton}
                 onPress={() => handleAddComment(post.id, index)}
@@ -257,6 +282,7 @@ const homeStyles = StyleSheet.create({
             </Card.Content>
           </Card>
         ))}
+
       </ScrollView>
     </ImageBackground>
     </FontProvider>
@@ -268,7 +294,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },likeButton: {
+  },
+  likeButton: {
     width: 30,
     height: 30,
     resizeMode: 'contain',
@@ -337,16 +364,28 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     width: '90%',
-    height: 40, // Adjusted the height
+    height: 40,
     borderWidth: 1,
     borderColor: 'gray',
     borderRadius: 20,
     padding: 10,
     marginTop: 10,
-    marginBottom: 20, // Added more space between the search bar and the posts
+    marginBottom: 20,
     backgroundColor: 'white',
   },
   postsContainer: {
-    marginBottom: 20, // Added more space between the search bar and the posts
+    marginBottom: 20,
+  },
+  toggleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 40, 
+  },
+  toggleLabel: {
+    fontSize: 16,
+    color: 'black',
+    marginRight: 10,
   },
 });
+
