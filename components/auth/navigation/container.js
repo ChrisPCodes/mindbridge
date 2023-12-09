@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { StyleSheet, View, Text, ScrollView} from "react-native"
+import { StyleSheet, View, Text, ScrollView } from "react-native"
 import { NavigationContainer } from '@react-navigation/native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import Home from './screens/Home';
@@ -10,6 +10,8 @@ import { HomeStackNavigator } from './HomeStackNavigator';
 import Communitytopic from './screens/Communitytopic';
 import AddFriends from './screens/AddFriends';
 import MoodTracker from './screens/MoodTracker';
+import MoodDetailsScreen from './screens/MoodDetailsScreen';
+import MoodSummaryScreen from './screens/MoodSummaryScreen';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -32,21 +34,29 @@ export default function Container({ route, navigation }) {
               tabStyle: { width: 'auto' },
             }}
           >
+
             <Tab.Screen
               name="Home"
-              component={Home}
+              component={HomeStackNavigator}
               initialParams={{ user }}
             />
-             <Tab.Screen name="Track your Mood" component={MoodTracker} />
+            <Tab.Screen name="Track your Mood" component={MoodTracker} />
             <Tab.Screen name="Community" component={Communitytopic} />
             <Tab.Screen name="Add Friends" component={AddFriends} />
+
+            
             <Tab.Screen
               name="Add Post"
               component={AddPostScreen}
               initialParams={{ user }}
             />
-            <Tab.Screen name="User Profile" component={UserProfile} initialParams={{user}}/>
+            <Tab.Screen name="User Profile" component={UserProfile} initialParams={{ user }} />
             <Tab.Screen name="Quick Help Guide" component={QHG} />
+            {/* <Tab.Screen
+              name="Tracker"
+              component={HomeStackNavigator}
+              options={{ headerShown: false }}
+            /> */}
           </Tab.Navigator>
         </ScrollView>
       </NavigationContainer>

@@ -9,7 +9,7 @@ const HomeStack = createNativeStackNavigator();
 
 export function HomeStackNavigator() {
   return (
-    <HomeStack.Navigator>
+    <HomeStack.Navigator initialRouteName='Home'>
       <HomeStack.Screen name="Home" component={Home} />
       <HomeStack.Screen name="MoodTracker" component={MoodTracker} />
       <HomeStack.Screen name="MoodDetailsScreen" component={MoodDetailsScreen}/>
