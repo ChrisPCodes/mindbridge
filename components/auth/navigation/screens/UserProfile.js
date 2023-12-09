@@ -76,9 +76,8 @@ export default function MoreOptions({ route, navigation }) {
 
   const [isEditMode, setIsEditMode] = useState(false);
   const [userInfo, setUserInfo] = useState({
-    username: "Placeholder",
-    bio: 'Your Bio',
-    discordId: 'Your Discord ID',
+   
+    discordId: 'Mind Bridge Discord Channel',
     isPrivate: false, // isPrivate value if user wants to enable privacy settings
   });
 
@@ -191,15 +190,11 @@ export default function MoreOptions({ route, navigation }) {
                 </View>
               </View>
                   <View style={{ alignItems: 'center', marginTop: 20 }}>
-                    <Button
-                      title="Edit Profile"
-                      onPress={handleEdit}
-                      color="#ffffff"
-                    />
+                 
 
                       <TouchableOpacity onPress={handleDiscordClick}>
-                      <Text style={{  fontSize: 16, color: 'white', }}>
-                        Discord ID: {userInfo.discordId}
+                    <Text style={{  fontSize: 16, color: 'white', }}>
+                       {userInfo.discordId}
                       </Text>
                     </TouchableOpacity>
                   </View>
