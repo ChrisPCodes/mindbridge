@@ -4,8 +4,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { StyleSheet, View, ImageBackground, Button, ScrollView, Text, TextInput } from 'react-native';
 import { Card, Title, Paragraph } from 'react-native-paper';
 import UserProfileEdit from './UserProfileEdit';
-import { FontProvider } from '../../../../FontContext';
-import { FontContext } from '../../../../FontContext';
+import { FontProvider, FontContext } from '../../../../FontContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FIREBASE_AUTH, FIRESTORE_DB } from '../../../../App';
 import { doc, getDoc } from 'firebase/firestore';
@@ -13,7 +12,9 @@ import { Clipboard, Linking, TouchableOpacity } from 'react-native';
 
 
 export default function MoreOptions({ route, navigation }) {
+  const { fontSize, updateFont } = useContext(FontContext);
   const [userName, setUserName] = useState(''); // State to store the user's name
+  const [isPrivate, setIsPrivate] = useState(false); // State for the privacy toggle
   const user = route.params?.user;
   const userUID = user.uid;
   console.log("FROM THE USER PROFILE LOGG")
@@ -43,10 +44,9 @@ export default function MoreOptions({ route, navigation }) {
 
   console.log("NAME FROM THE USER  PROFILE");
   console.log(userName);
-
-
-  const { fontSize } = useContext(FontContext);
   
+ 
+
   const dynamicStyles = StyleSheet.create({
     title: {
       fontSize: fontSize,
@@ -158,11 +158,19 @@ export default function MoreOptions({ route, navigation }) {
       [cardTitle]: prevCounts[cardTitle] + 1,
     }));
   };
+  const handleFontSizeChange = (newFontSize) => {
+    updateFont(newFontSize);
+  };
+
+  const handlePrivacyToggle = () => {
+    setIsPrivate((prevIsPrivate) => !prevIsPrivate);
+  };
 
   return (
     <FontProvider>
     <ImageBackground source={require('./background2.png')} style={styles.container}>
-      <ScrollView>
+      <ScrollView>          
+
         {isEditMode ? (
           <UserProfileEdit
             initialUserInfo={userInfo}
@@ -198,6 +206,33 @@ export default function MoreOptions({ route, navigation }) {
                       </Text>
                     </TouchableOpacity>
                   </View>
+          {/* Font Size Options */}
+          <View style={styles.fontSizeContainer}>
+            <Text style={styles.fontSizeText}>Change Font Size:</Text>
+            <View style={styles.fontSizeOptionsContainer}>
+              <TouchableOpacity onPress={() => handleFontSizeChange(15)}>
+                <Text style={styles.fontSizeOptionText}>Small</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => handleFontSizeChange(18)}>
+                <Text style={styles.fontSizeOptionText}>Medium</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => handleFontSizeChange(20)}>
+                <Text style={styles.fontSizeOptionText}>Large</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* Privacy Toggle */}
+          <View style={styles.privacyToggleContainer}>
+            <Text style={styles.privacyText}>Privacy:</Text>
+            <TouchableOpacity onPress={handlePrivacyToggle}>
+              <View style={[styles.toggleContainer, isPrivate && styles.toggleActive]}>
+                <View style={[styles.toggle, isPrivate && styles.toggleActiveBackground]}>
+                  <View style={[styles.toggleKnob, isPrivate && styles.toggleKnobActive]} />
+                </View>
+              </View>
+            </TouchableOpacity>
+          </View>
                 </Card.Content>
               </Card>
 
@@ -217,7 +252,6 @@ export default function MoreOptions({ route, navigation }) {
             </View>
           </SafeAreaView>
         )}
-
         {/* Liked button example */}
         <Card style={styles.card}>
           <Card.Cover source={require('./random.png')} />
@@ -329,5 +363,77 @@ const styles = StyleSheet.create({
   profilecard:{
 
     paddingBottom: 30
-  }
+  },
+
+  fontSizeText :{
+    color: 'white',
+  },
+  privacyText: {
+    color: 'white',
+    fontSize: 16,
+  },
+
+    fontSizeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 10,
+  },
+
+  fontSizeText: {
+    fontSize: 16,
+    color: 'white',
+    marginRight: 10,
+  },
+
+  fontSizeOptionsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 10, // Adjust this value to add space on the left
+  },
+
+  fontSizeOptionText: {
+    fontSize: 16,
+    color: 'white',
+    marginRight: 10,
+  },
+
+  toggleContainer: {
+    width: 40,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: 'grey',
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    borderWidth: 1, // Add border to the toggle container
+    borderColor: 'grey', // Set border color to match the background
+  },
+
+  toggle: {
+    width: 40,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: 'white',
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+  },
+
+  toggleKnob: {
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: 'white',
+  },
+
+  toggleActive: {
+    backgroundColor: 'green',
+  },
+
+  toggleKnobActive: {
+    marginLeft: 20,
+  },
+
+  toggleActiveBackground: {
+    backgroundColor: 'green',
+  },
 });
