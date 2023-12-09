@@ -105,7 +105,7 @@ export class App extends Component {
           <Stack.Screen name ="FAQ" component          ={FAQ}/>
           <Stack.Screen name ="UsageTutorial" component          ={UsageTutorial}/>
           <Stack.Screen name="HomeScreen" component={Home} />
-          <Stack.Screen name = "HomeStackNavigator" component={HomeStackNavigator}/>
+          <Stack.Screen name = "HomeStackNavigator" component={HomeStackNavigator} options={{headerShown:false}}/>
           <Stack.Screen name='MoodTracker' component={MoodTracker}/>
           <Stack.Screen name="MoodDetailsScreen" component={MoodDetailsScreen} />
           <Stack.Screen name="MoodSummaryScreen" component={MoodSummaryScreen} />

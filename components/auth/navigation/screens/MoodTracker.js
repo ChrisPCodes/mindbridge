@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, ImageBackground, Button } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
+import { HomeStackNavigator } from '../HomeStackNavigator';
+import Home from './Home';
+
 
 const moodOptions = ['Happy', 'Sad', 'Angry', 'Excited', 'Tired', 'Frustrated', 'Moody', 'Depressed', 'Stressed', 'Anxious', "Relaxed", 'Hopeful', 'Bored', 'Melancholic'];
 
 const goodMoods = new Set(['Happy', 'Excited', 'Relaxed', 'Hopeful']);
 const badMoods = new Set(['Sad', 'Angry', 'Tired', 'Frustrated', 'Moody', 'Depressed', 'Stressed', 'Anxious', 'Bored', 'Melancholic']);
+
 
 export default function MoodTracker({ route, navigation }) {
     const [selectedMood, setSelectedMood] = useState(null);
