@@ -104,7 +104,6 @@ export class App extends Component {
           <Stack.Screen name ="About" component          ={AboutScreen}/>
           <Stack.Screen name ="FAQ" component          ={FAQ}/>
           <Stack.Screen name ="UsageTutorial" component          ={UsageTutorial}/>
-          
           <Stack.Screen name="HomeScreen" component={Home} />
           <Stack.Screen name = "HomeStackNavigator" component={HomeStackNavigator}/>
           <Stack.Screen name='MoodTracker' component={MoodTracker}/>
