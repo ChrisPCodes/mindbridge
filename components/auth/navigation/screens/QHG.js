@@ -1,9 +1,12 @@
-import React, { useContext } from 'react';
+import React, { useContext,useState } from 'react';
 import { StyleSheet, View, ImageBackground, ScrollView } from 'react-native';
 import { Card, Title, Paragraph } from 'react-native-paper';
 import { FontProvider } from '../../../../FontContext';
 import { FontContext } from '../../../../FontContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Switch } from 'react-native';
+import { Text } from 'react-native';
+
 
 
 const disorders = [
@@ -73,6 +76,11 @@ const disorders = [
 export default function QuickHelpGuide({ navigation }) {
   
   const { fontSize } = useContext(FontContext);
+  const [nightMode, setNightMode] = useState(false);
+  const toggleNightMode = () => {
+    setNightMode((prevMode) => !prevMode);
+  };
+  
 
   // Added dynamic styles for font size
   const dynamicStyles = StyleSheet.create({
@@ -86,8 +94,18 @@ export default function QuickHelpGuide({ navigation }) {
   });
 
   return (
-    <FontProvider>
-    <ImageBackground source={require('./background2.png')} style={styles.container}>
+    <FontProvider>    
+    <ImageBackground 
+    source={nightMode ? require('./black.png'): require ('./background2.png')} style={styles.container}>
+    <View style={styles.toggleContainer}>
+        <Text style={styles.toggleLabel}>Night Mode</Text>
+        <Switch
+          value={nightMode}
+          onValueChange={toggleNightMode}
+          trackColor={{ false: '#767577', true: '#81b0ff' }}
+          thumbColor={nightMode ? '#f5dd4b' : '#f4f3f4'}
+        />
+      </View>
       <ScrollView>
         {disorders.map((disorder, index) => (
           <Card key={index} style={styles.card}>
@@ -128,5 +146,16 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 16, // Adjust the font size for descriptions
+  },
+  toggleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center', // Center horizontally
+    marginTop: 20, // Adjust the margin as needed
+  },
+  toggleLabel: {
+    fontSize: 16,
+    color: 'black',
+    marginRight: 10,
   },
 });
