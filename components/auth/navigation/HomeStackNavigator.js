@@ -7,10 +7,10 @@ import MoodSummaryScreen from './screens/MoodSummaryScreen';
 
 const HomeStack = createNativeStackNavigator();
 
-export function HomeStackNavigator() {
+export function HomeStackNavigator(route) {
   return (
     <HomeStack.Navigator initialRouteName='Home'>
-      <HomeStack.Screen name="Home" component={Home} />
+      <HomeStack.Screen name="Home" component={Home}/>
       <HomeStack.Screen name="MoodTracker" component={MoodTracker} />
       <HomeStack.Screen name="MoodDetailsScreen" component={MoodDetailsScreen}/>
       <HomeStack.Screen name="MoodSummaryScreen" component={MoodSummaryScreen}/>

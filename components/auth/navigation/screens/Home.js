@@ -1,48 +1,61 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, StyleSheet, ScrollView, ImageBackground, TextInput, TouchableOpacity, Image } from 'react-native';
-// import {HomeStackNavigator} from './HomeStackNavigator'; 
-// import MoodTracker from './MoodTracker';
 import { Card, Title, Paragraph } from 'react-native-paper';
-import { FIRESTORE_DB } from '../../../../App';
-import { HomeStackNavigator } from '../HomeStackNavigator';
-// import MoodTracker from './MoodTracker';
+import { FIREBASE_AUTH, FIRESTORE_DB } from '../../../../App';
 import { collection, query, getDocs, doc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { FontContext } from '../../../../FontContext';
 import { FontProvider } from '../../../../FontContext';
 import { Switch } from 'react-native'; 
-
-
+import { onAuthStateChanged } from '@firebase/auth';
 
 export default function Home({ route, navigation}) {
   const [posts, setPosts] = useState([]);
   const [commentTexts, setCommentTexts] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const db = FIRESTORE_DB;
-  const user = route.params?.user;
-  const [userName, setUserName] = useState(''); // State to store the user's name
-  // const onTrackMoodPress = () => {
-  //   navigation.navigate('MoodTracker');
-  // };
+  const auth = FIREBASE_AUTH;
+  const [user, setUser] = useState(null);
+  const [nightMode, setNightMode] = useState(false);
+  const [userName, setUserName] = useState('');
+  const [userUID, setUserUID] = useState(null);
 
-  console.log("FROM HOME USER & USER NAME ");
-  console.log(user);
+  useEffect(() => {
+    const user = auth.currentUser;
 
-  const [nightMode, setNightMode] = useState(false); // State for night mode toggle
-  
+    if (user) {
+      setUser(user);
+      setUserUID(user.uid);
+    } else {
+      console.log("NOT AUTHENTICATED ");
+    }
+  }, [auth]);
+
+  useEffect(() => {
+    fetchPosts();
+  }, []); // Run fetchPosts only once when the component mounts
+
+  useEffect(() => {
+    if (userUID) {
+      fetchUserName();
+    }
+  }, [userUID]); // Run fetchUserName when userUID changes
+
   const toggleNightMode = () => {
     setNightMode((prevMode) => !prevMode);
   };
-  
 
   const fetchUserName = async () => {
     try {
-      const userDoc = doc(db, 'users', user.uid);
+      console.log("Fetching user name for UID:", userUID);
+      const userDoc = doc(db, 'users', userUID);
       const userDocSnapshot = await getDoc(userDoc);
 
       if (userDocSnapshot.exists()) {
         const userData = userDocSnapshot.data();
         setUserName(userData.name);
-        console.log(userName);
+        console.log("User Name:", userData.name);
+      } else {
+        console.log("User document does not exist.");
       }
     } catch (error) {
       console.error('Error fetching user name:', error);
@@ -53,7 +66,6 @@ export default function Home({ route, navigation}) {
     try {
       const postsCollection = collection(db, 'posts');
       const postsQuery = query(postsCollection);
-
       const querySnapshot = await getDocs(postsQuery);
       const postsData = [];
 
@@ -79,7 +91,6 @@ export default function Home({ route, navigation}) {
   const handleAddComment = async (postId, postIndex) => {
     try {
       const postDocRef = doc(db, 'posts', postId);
-
       const currentCommentText = commentTexts[postIndex];
 
       if (currentCommentText.trim() === '') {
@@ -117,174 +128,88 @@ export default function Home({ route, navigation}) {
     }
   };
 
-  useEffect(() => {
-    fetchUserName();
-    fetchPosts();
-  }, []);
-
   const filteredPosts = posts.filter((post) => {
     return (
       post.userDisplayName && post.userDisplayName.toLowerCase().includes(searchQuery.toLowerCase())
     );
   });
 
-  console.log("FROM HOME USER NAME NOT WORKING ANYMORE?????")
-  console.log(userName);
   const { fontSize } = useContext(FontContext);
-//add use context 
 
-const homeStyles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  Title : {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginTop: 10,
-    color: 'black',
-    fontSize : fontSize,
-  },  
-  
-  commentUser : {
-    fontSize: 16,
-    fontWeight: 'bold',
-    fontSize :  fontSize,
-  },
-
-  commentTitle : {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginTop: 10,
-    fontSize :  fontSize,
-  },  
-  commentText : {
-    fontSize: 16,
-    fontSize : fontSize,
-  },
- 
-  commentInput : {
-    width: '100%',
-    height: 40,
-    borderWidth: 1,
-    borderColor: 'gray',
-    borderRadius: 20,
-    padding: 10,
-    marginTop: 10,
-    backgroundColor: 'white',
-    fontSize:fontSize,
-  },
-  welcomeText: {
-    fontSize: 20 + fontSize,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    fontSize: fontSize,
-  },
-
-  contentText: {
-    fontSize: fontSize,
-    textAlign: 'center',
-  },
-  commentButtonText: {
-    color: 'black',
-    fontSize: 16,
-    fontWeight: 'bold',
-    fontSize:  fontSize,
-
-  },
-
-  searchInput: {
-  width: '100%',
-  height: 30, // Adjusted the height
-  borderWidth: 1,
-  borderColor: 'gray',
-  borderRadius: 20,
-  padding: 10,
-  marginTop: 10,
-  marginBottom: 20, // Added more space between the search bar and the posts
-  backgroundColor: 'white',
-  fontSize: fontSize,
-
-  },
-
-});
-
+  const homeStyles = StyleSheet.create({
+    // ... your existing styles
+  });
 
   return (
     <FontProvider>
-    <ImageBackground
-    
-    source={nightMode ? require('../../../../assets/black.png') 
-    : require('../../../../assets/background.png')}
-      style={styles.container}
-    >
-      <Text style={styles.welcomeText}>Hello {userName }, Welcome!</Text>
-      <TextInput
-        style={styles.searchInput}
-        placeholder="Search post by name..."
-        value={searchQuery}
-        onChangeText={setSearchQuery}
-      />
+      <ImageBackground
+        source={nightMode ? require('../../../../assets/black.png') : require('../../../../assets/background.png')}
+        style={styles.container}
+      >
+        <Text style={styles.welcomeText}>Hello {userName}, Welcome!</Text>
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search post by name..."
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+        />
 
-<View style={homeStyles.toggleContainer}>
-              <Text style={homeStyles.toggleLabel}>Night Mode</Text>
-              <Switch
-                value={nightMode}
-                onValueChange={() => setNightMode((prevMode) => !prevMode)}
-                trackColor={{ false: '#767577', true: '#81b0ff' }}
-                thumbColor={nightMode ? '#f5dd4b' : '#f4f3f4'}
-              />
-            </View>
+        <View style={homeStyles.toggleContainer}>
+          <Text style={homeStyles.toggleLabel}>Night Mode</Text>
+          <Switch
+            value={nightMode}
+            onValueChange={() => setNightMode((prevMode) => !prevMode)}
+            trackColor={{ false: '#767577', true: '#81b0ff' }}
+            thumbColor={nightMode ? '#f5dd4b' : '#f4f3f4'}
+          />
+        </View>
 
-      <ScrollView style={styles.postsContainer}>
-        {filteredPosts.map((post, index) => (
-          <Card key={index} style={styles.card}>
-            <Card.Content>
-              <Title style={homeStyles.Title}>{post.userDisplayName}</Title>
-              <Paragraph>{post.text}</Paragraph>
-              {post.comments && post.comments.length > 0 && (
-                <View>
-                  <Text style={homeStyles.commentTitle}>Comments:</Text>
-                  {post.comments.map((comment, commentIndex) => (
-                    <View key={commentIndex} style={styles.comment}>
-                      <Text style={homeStyles.commentUser}>{comment.userDisplayName}:</Text>
-                      <Text style={homeStyles.commentText}>{comment.text}</Text>
-                    </View>
-                  ))}
-                </View>
-              )}
-              <TouchableOpacity onPress={() => handleLikePost(post.id)}>
-                <Image
-                  source={require('../../../../assets/heart.png')}
-                  style={styles.likeButton}
+        <ScrollView style={styles.postsContainer}>
+          {filteredPosts.map((post, index) => (
+            <Card key={index} style={styles.card}>
+              <Card.Content>
+                <Title style={homeStyles.Title}>{post.userDisplayName}</Title>
+                <Paragraph>{post.text}</Paragraph>
+                {post.comments && post.comments.length > 0 && (
+                  <View>
+                    <Text style={homeStyles.commentTitle}>Comments:</Text>
+                    {post.comments.map((comment, commentIndex) => (
+                      <View key={commentIndex} style={styles.comment}>
+                        <Text style={homeStyles.commentUser}>{comment.userDisplayName}:</Text>
+                        <Text style={homeStyles.commentText}>{comment.text}</Text>
+                      </View>
+                    ))}
+                  </View>
+                )}
+                <TouchableOpacity onPress={() => handleLikePost(post.id)}>
+                  <Image
+                    source={require('../../../../assets/heart.png')}
+                    style={styles.likeButton}
+                  />
+                </TouchableOpacity>
+                <Text style={styles.likesCount}>{post.likes.length} Likes</Text>
+                <TextInput
+                  style={homeStyles.commentInput}
+                  placeholder="Add a comment..."
+                  value={commentTexts[index]}
+                  onChangeText={(text) => {
+                    const updatedCommentTexts = [...commentTexts];
+                    updatedCommentTexts[index] = text;
+                    setCommentTexts(updatedCommentTexts);
+                  }}
                 />
-              </TouchableOpacity>
-              <Text style={styles.likesCount}>{post.likes.length} Likes</Text>
-              <TextInput
-                style={homeStyles.commentInput}
-                placeholder="Add a comment..."
-                value={commentTexts[index]}
-                onChangeText={(text) => {
-                  const updatedCommentTexts = [...commentTexts];
-                  updatedCommentTexts[index] = text;
-                  setCommentTexts(updatedCommentTexts);
-                }}
-              />
 
-              <TouchableOpacity
-                style={styles.commentButton}
-                onPress={() => handleAddComment(post.id, index)}
-              >
-                <Text style={homeStyles.commentButtonText}>Add Comment</Text>
-              </TouchableOpacity>
-            </Card.Content>
-          </Card>
-        ))}
-
-      </ScrollView>
-    </ImageBackground>
+                <TouchableOpacity
+                  style={styles.commentButton}
+                  onPress={() => handleAddComment(post.id, index)}
+                >
+                  <Text style={homeStyles.commentButtonText}>Add Comment</Text>
+                </TouchableOpacity>
+              </Card.Content>
+            </Card>
+          ))}
+        </ScrollView>
+      </ImageBackground>
     </FontProvider>
   );
 }

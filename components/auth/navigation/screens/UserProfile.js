@@ -1,36 +1,28 @@
-//Avlokita's work
-
 import React, { useState, useEffect, useContext } from 'react';
-import { StyleSheet, View, ImageBackground, Button, ScrollView, Text, TextInput } from 'react-native';
-import { Card, Title, Paragraph } from 'react-native-paper';
-import UserProfileEdit from './UserProfileEdit';
+import { StyleSheet, View, ImageBackground, ScrollView, Text, TouchableOpacity, Clipboard, Linking } from 'react-native';
+import { Card, Title, Paragraph, Button } from 'react-native-paper';
 import { FontProvider, FontContext } from '../../../../FontContext';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { FIREBASE_AUTH, FIRESTORE_DB } from '../../../../App';
-import { doc, getDoc } from 'firebase/firestore';
-import { Clipboard, Linking, TouchableOpacity } from 'react-native';
-
+import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
+import UserProfileEdit from './UserProfileEdit';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function MoreOptions({ route, navigation }) {
-  const { fontSize, updateFont } = useContext(FontContext);
-  const [userName, setUserName] = useState(''); // State to store the user's name
-  const [isPrivate, setIsPrivate] = useState(false); // State for the privacy toggle
+  const [userName, setUserName] = useState('');
   const user = route.params?.user;
   const userUID = user.uid;
-  console.log("FROM THE USER PROFILE LOGG")
-  console.log(userUID)
+  const db = FIRESTORE_DB;
+
+  console.log("FROM USER EDIT PROFILE")
+  console.log(userUID);
 
   useEffect(() => {
     const fetchUserName = async () => {
       try {
-        // Reference to the user document in Firestore using the UID
         const userDocRef = doc(db, 'users', userUID);
-
-        // Fetch the user document
         const userDoc = await getDoc(userDocRef);
 
         if (userDoc.exists()) {
-          // If the document exists, update the state with the user's name
           const userName = userDoc.data().name;
           setUserName(userName);
         }
@@ -40,47 +32,50 @@ export default function MoreOptions({ route, navigation }) {
     };
 
     fetchUserName();
-  }, [userUID]); // Run when the component mounts or when userUID changes
+  }, [userUID]);
 
-  console.log("NAME FROM THE USER  PROFILE");
   console.log(userName);
-  
- 
 
-  const dynamicStyles = StyleSheet.create({
-    title: {
-      fontSize: fontSize,
-      fontWeight: 'bold',
-    },
-    followers: {
-      fontSize: fontSize,
-      alignContent: 'center',
-      // fontWeight: 'bold',
-    },
+  const { fontSize, updateFont } = useContext(FontContext);
 
-    following: {
-      fontSize: fontSize,
-      alignContent: 'center',
+  const [userPosts, setUserPosts] = useState([]);
 
-    },
-    bio: {
-      fontSize: fontSize,
-      fontStyle: 'italic',
-      marginTop: 5,
-    },
-    // buttonText: {
-    //   fontSize: fontSize,
-    //   marginRight: 10,
-    // },
-  });
+  useEffect(() => {
+    const fetchUserPosts = async () => {
+      try {
+        const postsCollection = collection(db, 'posts');
+        const postsQuery = query(postsCollection, where('userId', '==', userUID));
+        const querySnapshot = await getDocs(postsQuery);
+
+        const userPostsData = [];
+
+        querySnapshot.forEach((doc) => {
+          const post = doc.data();
+          const postId = doc.id;
+
+          userPostsData.push({
+            id: postId,
+            ...post,
+          });
+        });
+
+        setUserPosts(userPostsData);
+      } catch (error) {
+        console.error('Error fetching user posts:', error);
+      }
+    };
+
+    fetchUserPosts();
+  }, [userUID]);
 
   const [isEditMode, setIsEditMode] = useState(false);
   const [userInfo, setUserInfo] = useState({
-   
-    discordId: 'Mind Bridge Discord Channel',
-    isPrivate: false, // isPrivate value if user wants to enable privacy settings
+    username: 'Your Username',
+    bio: 'Your Bio',
+    discordId: 'Your Discord ID',
+    followers: 1000,
+    following: 500,
   });
-
   const [likeCounts, setLikeCounts] = useState({
     card1: 0,
     card2: 0,
@@ -89,12 +84,10 @@ export default function MoreOptions({ route, navigation }) {
   const [friendsList, setFriendsList] = useState([]);
   const [friendsListSize, setFriendsListSize] = useState(0);
   const auth = FIREBASE_AUTH;
-  const db = FIRESTORE_DB;
 
   useEffect(() => {
     const fetchFriendsList = async () => {
       try {
-        // Fetch the user's friends list from Firestore
         const user = auth.currentUser;
         const uid = user.uid;
         const currentUserUid = uid;
@@ -115,7 +108,7 @@ export default function MoreOptions({ route, navigation }) {
     };
 
     fetchFriendsList();
-  }, []); // Run once when the component mounts
+  }, []);
 
   const handleSave = (updatedUserInfo) => {
     setUserInfo(updatedUserInfo);
@@ -129,28 +122,24 @@ export default function MoreOptions({ route, navigation }) {
   const handleCancelEdit = () => {
     setIsEditMode(false);
   };
+
   const handleDiscordClick = async () => {
-    // Copy the Discord username to clipboard
     Clipboard.setString(userInfo.discordId);
-  
-    // Try to open the Discord app (if installed)
-    const discordAppUrl = 'https://discord.gg/2cBVaNJP'; // Discord app URL scheme
-    const webUrl = 'https://discord.com/'; // Web URL as a fallback
-  
+
+    const discordAppUrl = 'https://discord.gg/2cBVaNJP';
+    const webUrl = 'https://discord.com/';
+
     try {
-      // Attempt to open the Discord app
       const supported = await Linking.canOpenURL(discordAppUrl);
       if (supported) {
         await Linking.openURL(discordAppUrl);
       } else {
-        // If Discord app is not installed, open the web URL
         await Linking.openURL(webUrl);
       }
     } catch (error) {
       console.error('Error opening Discord app:', error);
     }
   };
-  
 
   const handleLike = (cardTitle) => {
     setLikeCounts((prevCounts) => ({
@@ -158,151 +147,110 @@ export default function MoreOptions({ route, navigation }) {
       [cardTitle]: prevCounts[cardTitle] + 1,
     }));
   };
+
   const handleFontSizeChange = (newFontSize) => {
     updateFont(newFontSize);
   };
 
-  const handlePrivacyToggle = () => {
-    setIsPrivate((prevIsPrivate) => !prevIsPrivate);
-  };
-
   return (
     <FontProvider>
-    <ImageBackground source={require('./background2.png')} style={styles.container}>
-      <ScrollView>          
-
-        {isEditMode ? (
-          <UserProfileEdit
-            initialUserInfo={userInfo}
-            onSave={handleSave}
-            onCancel={handleCancelEdit}
-          />
-        ) : (
-          <SafeAreaView style={styles.container}>
-            <View style={styles.container}>
-              <Card style={{ ...styles.profilecard, backgroundColor: 'rgba(204, 204, 255, 0.5)' }}>
-                <Card.Cover source={require('./random3.png')} style={{ ...styles.imagecard, opacity: 0.9 }} />
-                <Card.Content>
-                <View style={styles.bioContainer}>
-                <Paragraph style={{ fontStyle: 'italic', marginTop: 0, fontSize: 18 }}>
-                    </Paragraph>
+      <ImageBackground source={require('./background2.png')} style={styles.container}>
+        <ScrollView>
+          {isEditMode ? (
+            <UserProfileEdit
+              initialUserInfo={userInfo}
+              onSave={handleSave}
+              onCancel={handleCancelEdit}
+            />
+          ) : (
+            <SafeAreaView style={styles.container}>
+              <View style={styles.container}>
+                <Card style={{ ...styles.profilecard, backgroundColor: 'rgba(204, 204, 255, 0.5)' }}>
+                  <Card.Cover source={require('./random3.png')} style={{ ...styles.imagecard, opacity: 0.9 }} />
+                  <Card.Content>
+                    <View style={styles.bioContainer}>
+                      <Paragraph style={{ fontStyle: 'italic', marginTop: 0, fontSize: 18 }}>
+                      </Paragraph>
                     </View>
-
-              <View style={{ alignItems: 'center', marginTop: 20 }}>
-                <Title style={{ fontSize: 32, fontWeight: 'bold' }}>{userName}</Title>
-              </View>
-              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
-                <View>
-                  <Text style={{ fontWeight: 'bold', fontSize: 18,  marginLeft: 155 }}>Friends</Text>
-                  <Text style={{ color:'white', fontSize: 23, fontWeight: 'bold', marginLeft: 175 }}>{friendsListSize}</Text>
-                </View>
-              </View>
-                  <View style={{ alignItems: 'center', marginTop: 20 }}>
-                 
-
-                      <TouchableOpacity onPress={handleDiscordClick}>
-                    <Text style={{  fontSize: 16, color: 'white', }}>
-                       {userInfo.discordId}
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-          {/* Font Size Options */}
-          <View style={styles.fontSizeContainer}>
-            <Text style={styles.fontSizeText}>Change Font Size:</Text>
-            <View style={styles.fontSizeOptionsContainer}>
-              <TouchableOpacity onPress={() => handleFontSizeChange(15)}>
-                <Text style={styles.fontSizeOptionText}>Small</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => handleFontSizeChange(18)}>
-                <Text style={styles.fontSizeOptionText}>Medium</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => handleFontSizeChange(20)}>
-                <Text style={styles.fontSizeOptionText}>Large</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          {/* Privacy Toggle */}
-          <View style={styles.privacyToggleContainer}>
-            <Text style={styles.privacyText}>Privacy:</Text>
-            <TouchableOpacity onPress={handlePrivacyToggle}>
-              <View style={[styles.toggleContainer, isPrivate && styles.toggleActive]}>
-                <View style={[styles.toggle, isPrivate && styles.toggleActiveBackground]}>
-                  <View style={[styles.toggleKnob, isPrivate && styles.toggleKnobActive]} />
-                </View>
-              </View>
-            </TouchableOpacity>
-          </View>
-                </Card.Content>
-              </Card>
-
-              {/* Friends list card */}
-              <Card style={{ ...styles.friendsCard, backgroundColor: '#pink' }}>
-                <Card.Content>
-                  <Text style={styles.friendsListTitle}>Friends List:</Text>
-                  <ScrollView style={styles.friendsListContainer}>
-                    {friendsList.map((friend) => (
-                      <View style={styles.friendsListItem} key={friend.uid}>
-                        <Text style={styles.friendsCardText}>{friend.name}</Text>
+                    <View style={{ alignItems: 'center', marginTop: 10 }}>
+                      <Title style={{ fontSize: 30, fontWeight: 'bold', alignSelf: "center" }}>{userName}</Title>
+                    </View>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
+                      <View>
+                        <Text style={{ fontWeight: 'bold', fontSize: 18, marginLeft: 155 }}>Friends</Text>
+                        <Text style={{ color: 'white', fontSize: 23, fontWeight: 'bold', marginLeft: 175 }}>{friendsListSize}</Text>
                       </View>
-                    ))}
-                  </ScrollView>
-                </Card.Content>
-              </Card>
-            </View>
-          </SafeAreaView>
-        )}
-        {/* Liked button example */}
-        <Card style={styles.card}>
-          <Card.Cover source={require('./random.png')} />
-          <Card.Content>
-            <Title>{userInfo.username}</Title>
-            <Paragraph>
-              Success is peace of mind, which is a direct link to life
-            </Paragraph>
-            <Button
-              title={`Liked (${likeCounts.card1})`}
-              onPress={() => handleLike('card1')}
-              color="darkred" // Text color is red
-            />
-          </Card.Content>
-        </Card>
+                    </View>
+                    <View style={{ alignItems: 'center' }}>
+                      <Paragraph style={{ fontStyle: 'italic', fontSize: 18 }}>{userInfo.bio}</Paragraph>
+                    </View>
+                    <View style={{ alignItems: 'center', }}>
+                      <Button
+                        title="Edit Profile"
+                        onPress={handleEdit}
+                        color="#ffffff"
+                      />
+                      <TouchableOpacity onPress={handleDiscordClick}>
+                        <Text style={{ fontSize: 16, color: 'white', }}>
+                          Discord ID: {userInfo.discordId}
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  </Card.Content>
+                </Card>
 
-        <Card style={styles.card}>
-          <Card.Cover source={require('./random2.png')} />
-          <Card.Content>
-            <Title>{userInfo.username}</Title>
-            <Paragraph>
-              Success is peace of mind, which is a direct link to life
-            </Paragraph>
-            <Button
-              title={`Liked (${likeCounts.card2})`}
-              onPress={() => handleLike('card2')}
-              color="darkred" // Text color is red
-            />
-          </Card.Content>
-        </Card>
+                {/* Friends list card */}
+                <Card style={{ ...styles.friendsCard, backgroundColor: '#pink' }}>
+                  <Card.Content>
+                    <Text style={styles.friendsListTitle}>Friends List:</Text>
+                    <ScrollView style={styles.friendsListContainer}>
+                      {friendsList.map((friend) => (
+                        <View style={styles.friendsListItem} key={friend.uid}>
+                          <Text style={styles.friendsCardText}>{friend.name}</Text>
+                        </View>
+                      ))}
+                    </ScrollView>
+                  </Card.Content>
+                </Card>
+                
+                <Text style ={styles.postTitle}>Posts:</Text>
+                {/* Display user posts */}
+                {userPosts.map((post) => (
+                  
+                  <Card key={post.id} style={styles.card}>
+                    <Card.Content>
+                      <Title>{post.userDisplayName}</Title>
+                      <Paragraph>{post.text}</Paragraph>
 
-        <Card style={styles.card}>
-          <Card.Cover source={require('./random.png')} />
-          <Card.Content>
-            <Title>{userInfo.username}</Title>
-            <Paragraph>
-              When the sun shines, we'll shine together,
-              Told you I'll be here forever,
-              Said I'll always be your friend
-            </Paragraph>
-            <Button
-              title={`Liked (${likeCounts.card3})`}
-              onPress={() => handleLike('card3')}
-              color="darkred" // Text color is red
-            />
-          </Card.Content>
-        </Card>
-      </ScrollView>
-    </ImageBackground>
+                      {/* Display comments */}
+                      <View>
+                        <Text style={styles.sectionTitle}>Comments:</Text>
+                        {post.comments && post.comments.length > 0 ? (
+                          post.comments.map((comment, index) => (
+                            <View key={index} style={styles.comment}>
+                              <Text style={styles.commentUser}>{comment.userDisplayName}:</Text>
+                              <Text style={styles.commentText}>{comment.text}</Text>
+                            </View>
+                          ))
+                        ) : (
+                          <Text>No comments</Text>
+                        )}
+                      </View>
+
+                      {/* Display likes */}
+                      <View>
+                        <Text style={styles.sectionTitle}>Likes: {post.likes ? post.likes.length : 0}</Text>
+                      </View>
+                    </Card.Content>
+                  </Card>
+                ))}
+              </View>
+            </SafeAreaView>
+          )}
+        </ScrollView>
+      </ImageBackground>
     </FontProvider>
-    );
+  );
 }
 
 const styles = StyleSheet.create({
@@ -312,9 +260,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   card: {
-    width: 400,
+    width: 360,
     marginVertical: 10,
-    height: 300,
+    marginTop:25,
+    //height: 300,
   },
   imagecard: {
     width: 400,
@@ -335,7 +284,7 @@ const styles = StyleSheet.create({
   friendsCard: {
     width: 400,
     marginVertical: 10,
-    height: 170,
+    //height: 200,
   },
   friendsListContainer: {
     maxHeight: 200,
@@ -380,7 +329,7 @@ const styles = StyleSheet.create({
   },
 
   fontSizeText: {
-    fontSize: 16,
+    fontSize: 18,
     color: 'white',
     marginRight: 10,
   },
@@ -436,4 +385,14 @@ const styles = StyleSheet.create({
   toggleActiveBackground: {
     backgroundColor: 'green',
   },
+  
+  postTitle:{
+    alignSelf: "flex-start",
+    fontSize: 30,
+    fontWeight: 'bold',
+    marginLeft: 20,
+    marginBottom: -20,
+
+
+  }
 });
