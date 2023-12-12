@@ -113,13 +113,17 @@ export default function MoreOptions({ route, navigation }) {
   }, [userUID]);
 
   const [isEditMode, setIsEditMode] = useState(false);
+  const [isPrivate, setIsPrivate] = useState(false); // State for the privacy toggle
   const [userInfo, setUserInfo] = useState({
     username: 'Your Username',
     bio: 'Your Bio',
     discordId: 'Your Discord ID',
     followers: 1000,
     following: 500,
+    isPrivate: false,
   });
+  
+  
   const [likeCounts, setLikeCounts] = useState({
     card1: 0,
     card2: 0,
@@ -194,6 +198,11 @@ export default function MoreOptions({ route, navigation }) {
 
   const handleFontSizeChange = (newFontSize) => {
     updateFont(newFontSize);
+  };
+ 
+
+  const handlePrivacyToggle = () => {
+    setIsPrivate((prevIsPrivate) => !prevIsPrivate);
   };
 
   return (
