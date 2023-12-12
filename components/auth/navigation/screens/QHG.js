@@ -1,8 +1,7 @@
 import React, { useContext,useState } from 'react';
 import { StyleSheet, View, ImageBackground, ScrollView } from 'react-native';
 import { Card, Title, Paragraph } from 'react-native-paper';
-import { FontProvider } from '../../../../FontContext';
-import { FontContext } from '../../../../FontContext';
+import { FontProvider, FontContext  } from '../../../../FontContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Switch } from 'react-native';
 import { Text } from 'react-native';
@@ -89,7 +88,7 @@ export default function QuickHelpGuide({ navigation }) {
       fontSize: fontSize, // Directly set the font size
     },
     description: {
-      fontSize: fontSize, // Directly set the font size
+      fontSize: fontSize, 
     },
   });
 

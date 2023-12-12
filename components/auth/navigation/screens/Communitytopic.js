@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { StyleSheet, Text, View, ImageBackground, ScrollView, TouchableOpacity, Linking, SafeAreaView, Image, Modal, Pressable } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
+import { FontProvider, FontContext } from '../../../../FontContext';
+// import { fontConfig } from 'react-native-paper/lib/typescript/styles/fonts';
 
 export default function Communitytopic({ navigation }) {
+    
     const cardsData = [
         {
             id: 1,
@@ -228,7 +231,44 @@ export default function Communitytopic({ navigation }) {
         Linking.openURL(url).catch(err => console.error("Couldn't load page", err));
     };
 
+    const { fontSize } = useContext(FontContext);
+
+    const dynamicStyles = StyleSheet.create({
+        title: {
+            fontSize: fontSize,
+            fontWeight: 'bold',
+            color: 'black',
+            textAlign: 'center',
+            marginVertical: 10,
+        },
+        filterButtonText: {
+            fontSize: fontSize,
+            color: 'black',
+            textAlign: 'center',
+        }, cardTitle: {
+            fontSize: fontSize,
+            fontWeight: 'bold',
+            marginTop: 5,
+        },cardInfo: {
+            fontSize: fontSize,
+            color: 'grey',
+        },
+        cardDescription: {
+            fontSize: fontSize,
+            color: 'gray',
+        },cardInfo: {
+            fontSize: fontSize,
+            color: 'grey',
+        },
+        cardDescription: {
+            fontSize: fontSize,
+            color: 'gray',
+        },
+      });
+      
+
     return (
+        <FontProvider>
         <ImageBackground
                 source={require('./background2.png')} // Replace with your image path
                 style={styles.imageBackground}
@@ -236,12 +276,12 @@ export default function Communitytopic({ navigation }) {
             >
         <SafeAreaView style={styles.safeArea}>
            
-                <Text style={styles.title}>Community Topics</Text>
+                <Text style={dynamicStyles.title}>Community Topics</Text>
                 <Pressable
                     style={styles.filterButton}
                     onPress={() => setModalVisible(true)}
                 >
-                    <Text style={styles.filterButtonText}>Filter by Category</Text>
+                    <Text style={dynamicStyles.filterButtonText}>Filter by Category</Text>
                 </Pressable>
 
                 <Modal
@@ -285,16 +325,17 @@ export default function Communitytopic({ navigation }) {
                             onPress={() => openLink(card.link)}
                         >
                             <Image source={card.image} style={styles.cardImage} />
-                            <Text style={styles.cardTitle}>{card.title}</Text>
-                            <Text style={styles.cardInfo}>Posted on: {card.datePosted}</Text>
-                            <Text style={styles.cardInfo}>Category: {card.category}</Text>
-                            <Text style={styles.cardDescription}>{card.description}</Text>
+                            <Text style={dynamicStyles.cardTitle}>{card.title}</Text>
+                            <Text style={dynamicStyles.cardInfo}>Posted on: {card.datePosted}</Text>
+                            <Text style={dynamicStyles.cardInfo}>Category: {card.category}</Text>
+                            <Text style={dynamicStyles.cardDescription}>{card.description}</Text>
                         </TouchableOpacity>
                     ))}
                 </ScrollView>
             
         </SafeAreaView>
         </ImageBackground>
+        </FontProvider>
     );
 }
 

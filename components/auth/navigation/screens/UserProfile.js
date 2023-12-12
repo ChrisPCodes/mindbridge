@@ -55,23 +55,36 @@ export default function MoreOptions({ route, navigation }) {
     followers: {
       fontSize: fontSize,
       alignContent: 'center',
-      // fontWeight: 'bold',
     },
-
     following: {
       fontSize: fontSize,
       alignContent: 'center',
-
     },
     bio: {
       fontSize: fontSize,
       fontStyle: 'italic',
       marginTop: 5,
     },
-    // buttonText: {
-    //   fontSize: fontSize,
-    //   marginRight: 10,
-    // },
+    friendsListTitle: {
+      fontSize: 30,
+      fontWeight: 'bold',
+      marginBottom: 10,
+    },
+    friendsCardText: {
+      color: 'white',
+      fontWeight: '700',
+      fontSize: fontSize,
+    },
+    postsCardText: {
+      color: 'black',
+      fontWeight: '700',
+      fontSize: fontSize,
+    },
+    fontSizeText: {
+      fontSize: 16,
+      color: 'white',
+      marginRight: 10,
+    },
   });
 
   const [isEditMode, setIsEditMode] = useState(false);
@@ -168,82 +181,72 @@ export default function MoreOptions({ route, navigation }) {
 
   return (
     <FontProvider>
-    <ImageBackground source={require('./background2.png')} style={styles.container}>
-      <ScrollView>          
-
-        {isEditMode ? (
-          <UserProfileEdit
-            initialUserInfo={userInfo}
-            onSave={handleSave}
-            onCancel={handleCancelEdit}
-          />
-        ) : (
-          <SafeAreaView style={styles.container}>
-            <View style={styles.container}>
-              <Card style={{ ...styles.profilecard, backgroundColor: 'rgba(204, 204, 255, 0.5)' }}>
-                <Card.Cover source={require('./random3.png')} style={{ ...styles.imagecard, opacity: 0.9 }} />
-                <Card.Content>
-                <View style={styles.bioContainer}>
-                <Paragraph style={{ fontStyle: 'italic', marginTop: 0, fontSize: 18 }}>
-                    </Paragraph>
+      <ImageBackground source={require('./background2.png')} style={styles.container}>
+        <ScrollView>
+          {isEditMode ? (
+            <UserProfileEdit
+              initialUserInfo={userInfo}
+              onSave={handleSave}
+              onCancel={handleCancelEdit}
+            />
+          ) : (
+            <SafeAreaView style={styles.container}>
+              <View style={styles.container}>
+                <Card style={{ ...styles.profilecard, backgroundColor: 'rgba(204, 204, 255, 0.5)' }}>
+                  <Card.Cover source={require('./random3.png')} style={{ ...styles.imagecard, opacity: 0.9 }} />
+                  <Card.Content>
+                    <View style={{ alignItems: 'center', marginTop: 20 }}>
+                      <Title style={{ ...dynamicStyles.title }}>{userName}</Title>
                     </View>
-
-              <View style={{ alignItems: 'center', marginTop: 20 }}>
-                <Title style={{ fontSize: 32, fontWeight: 'bold' }}>{userName}</Title>
-              </View>
-              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
-                <View>
-                  <Text style={{ fontWeight: 'bold', fontSize: 18,  marginLeft: 155 }}>Friends</Text>
-                  <Text style={{ color:'white', fontSize: 23, fontWeight: 'bold', marginLeft: 175 }}>{friendsListSize}</Text>
-                </View>
-              </View>
-                  <View style={{ alignItems: 'center', marginTop: 20 }}>
-                 
-
+                    <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
+                      <View>
+                        <Text style={{ fontWeight: 'bold', ...dynamicStyles.title, marginLeft: 155 }}>Friends</Text>
+                        <Text style={{ color: 'white', ...dynamicStyles.title, marginLeft: 175 }}>{friendsListSize}</Text>
+                      </View>
+                    </View>
+                    <View style={{ alignItems: 'center', marginTop: 20 }}>
                       <TouchableOpacity onPress={handleDiscordClick}>
-                    <Text style={{  fontSize: 16, color: 'white', }}>
-                       {userInfo.discordId}
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-          {/* Font Size Options */}
-          <View style={styles.fontSizeContainer}>
-            <Text style={styles.fontSizeText}>Change Font Size:</Text>
-            <View style={styles.fontSizeOptionsContainer}>
-              <TouchableOpacity onPress={() => handleFontSizeChange(15)}>
-                <Text style={styles.fontSizeOptionText}>Small</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => handleFontSizeChange(18)}>
-                <Text style={styles.fontSizeOptionText}>Medium</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => handleFontSizeChange(20)}>
-                <Text style={styles.fontSizeOptionText}>Large</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          {/* Privacy Toggle */}
-          <View style={styles.privacyToggleContainer}>
-            <Text style={styles.privacyText}>Privacy:</Text>
-            <TouchableOpacity onPress={handlePrivacyToggle}>
-              <View style={[styles.toggleContainer, isPrivate && styles.toggleActive]}>
-                <View style={[styles.toggle, isPrivate && styles.toggleActiveBackground]}>
-                  <View style={[styles.toggleKnob, isPrivate && styles.toggleKnobActive]} />
-                </View>
-              </View>
-            </TouchableOpacity>
-          </View>
-                </Card.Content>
-              </Card>
-
+                        <Text style={{ fontSize: 16, color: 'white', ...dynamicStyles.title }}>
+                          {userInfo.discordId}
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                    {/* Font Size Options */}
+                    <View style={styles.fontSizeContainer}>
+                      <Text style={dynamicStyles.fontSizeText}>Change Font Size:</Text>
+                      <View style={styles.fontSizeOptionsContainer}>
+                        <TouchableOpacity onPress={() => handleFontSizeChange(15)}>
+                          <Text style={dynamicStyles.fontSizeText}>Small</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => handleFontSizeChange(18)}>
+                          <Text style={dynamicStyles.fontSizeText}>Medium</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => handleFontSizeChange(20)}>
+                          <Text style={dynamicStyles.fontSizeText}>Large</Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                    {/* Privacy Toggle */}
+                    <View style={styles.privacyToggleContainer}>
+                      <Text style={styles.privacyText}>Privacy:</Text>
+                      <TouchableOpacity onPress={handlePrivacyToggle}>
+                        <View style={[styles.toggleContainer, isPrivate && styles.toggleActive]}>
+                          <View style={[styles.toggle, isPrivate && styles.toggleActiveBackground]}>
+                            <View style={[styles.toggleKnob, isPrivate && styles.toggleKnobActive]} />
+                          </View>
+                        </View>
+                      </TouchableOpacity>
+                    </View>
+                  </Card.Content>
+                  </Card>
               {/* Friends list card */}
               <Card style={{ ...styles.friendsCard, backgroundColor: '#pink' }}>
                 <Card.Content>
-                  <Text style={styles.friendsListTitle}>Friends List:</Text>
+                  <Text style={dynamicStyles.friendsListTitle}>Friends List:</Text>
                   <ScrollView style={styles.friendsListContainer}>
                     {friendsList.map((friend) => (
                       <View style={styles.friendsListItem} key={friend.uid}>
-                        <Text style={styles.friendsCardText}>{friend.name}</Text>
+                        <Text style={dynamicStyles.friendsCardText}>{friend.name}</Text>
                       </View>
                     ))}
                   </ScrollView>

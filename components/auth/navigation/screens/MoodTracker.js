@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { FontProvider, FontContext  } from '../../../../FontContext';
 import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, ImageBackground, Button } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
 import { HomeStackNavigator } from '../HomeStackNavigator';
@@ -13,6 +14,7 @@ const badMoods = new Set(['Sad', 'Angry', 'Tired', 'Frustrated', 'Moody', 'Depre
 
 export default function MoodTracker({ route, navigation }) {
     const [selectedMood, setSelectedMood] = useState(null);
+
 
     useEffect(() => {
         loadMood();
@@ -51,15 +53,43 @@ export default function MoodTracker({ route, navigation }) {
             badMoods: Array.from(badMoods)
         });
     };
+    const { fontSize } = useContext(FontContext);
 
+    const dynamicStyles = StyleSheet.create({
+       
+        headerText: {
+            fontSize: fontSize,
+            marginBottom: 40,
+            marginTop: 10,
+            fontWeight: 'bold',
+            textAlign: 'center',
+            color: 'darkblue'
+        },
+       
+        moodButtonText: {
+            color: 'white',
+            textAlign: 'center',
+            fontSize: fontSize,
+        },
+       
+        submitButtonText: {
+            color: 'white',
+            fontSize: fontSize,
+            textAlign: 'center',
+        },
+
+    });
+
+    
     return (
+        <FontProvider>
         <ImageBackground
             source={require('./background2.png')} // Replace with your image path
             style={styles.imageBackground}
             resizeMode="cover"
         >
             <View style={styles.container}>
-                <Text style={styles.headerText}>How are you feeling today?</Text>
+                <Text style={dynamicStyles.headerText}>How are you feeling today?</Text>
                 <ScrollView
                     style={styles.scrollView}
                     contentContainerStyle={styles.scrollViewContent}
@@ -70,7 +100,7 @@ export default function MoodTracker({ route, navigation }) {
                             style={selectedMood === mood ? styles.selectedMoodButton : styles.moodButton}
                             onPress={() => setSelectedMood(mood)}
                         >
-                            <Text style={styles.moodButtonText}>{mood}</Text>
+                            <Text style={dynamicStyles.moodButtonText}>{mood}</Text>
                         </TouchableOpacity>
                     ))}
                 </ScrollView>
@@ -78,7 +108,7 @@ export default function MoodTracker({ route, navigation }) {
                     style={styles.submitButton}
                     onPress={submitMood}
                 >
-                    <Button style={styles.submitButtonText}
+                    <Button style={dynamicStyles.submitButtonText}
                         title="Submit Mood"
                         onPress={() => navigation.navigate('MoodDetailsScreen', { 
                           mood: selectedMood, 
@@ -90,6 +120,7 @@ export default function MoodTracker({ route, navigation }) {
                 </TouchableOpacity>
             </View>
         </ImageBackground>
+        </FontProvider>
     );
 }
 
@@ -101,7 +132,7 @@ const styles = StyleSheet.create({
 
     },
     headerText: {
-        fontSize: 35,
+        fontsize: 35,
         marginBottom: 40,
         marginTop: 10,
         fontWeight: 'bold',
@@ -131,7 +162,7 @@ const styles = StyleSheet.create({
     moodButtonText: {
         color: 'white',
         textAlign: 'center',
-        fontSize: 20
+        fontsize: 20,
     },
     submitButton: {
         backgroundColor: 'skyblue',

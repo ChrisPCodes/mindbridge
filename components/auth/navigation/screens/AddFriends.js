@@ -1,7 +1,10 @@
-import * as React from 'react';
+// import * as React from 'react';
+import React, { useContext,useState } from 'react';
 import { StyleSheet, View, Text, ImageBackground, FlatList, TouchableOpacity, Alert } from 'react-native';
 import { FIREBASE_AUTH, FIRESTORE_DB } from '../../../../App';
 import { doc, getDoc, updateDoc, collection, getDocs } from 'firebase/firestore';
+import { FontProvider, FontContext  } from '../../../../FontContext';
+
 
 export default function AddFriends({ navigation }) {
   const auth = FIREBASE_AUTH;
@@ -110,33 +113,61 @@ export default function AddFriends({ navigation }) {
     }
   };
 
+
   React.useEffect(() => {
     checkAndAddFriendsList();
     getUsersList();
   }, []);
 
   const renderUserCard = ({ item }) => (
+    <FontProvider>
     <View style={styles.card}>
-      <Text style={styles.cardText}>{item.name}</Text>
+      <Text style={dynamicStyles.cardText}>{item.name}</Text>
       <TouchableOpacity
         style={styles.addButton}
         onPress={() => handleAddFriend(item.id, item.name)}>
-        <Text style={styles.cardAddButtonText}>Add Friend</Text>
+        <Text style={dynamicStyles.cardAddButtonText}>Add Friend</Text>
       </TouchableOpacity>
     </View>
+    </FontProvider>
   );
+  const { fontSize } = useContext(FontContext);
+
+  const dynamicStyles = StyleSheet.create({
+    title: {
+      fontSize: fontSize,
+      fontWeight: 'bold',
+      marginTop: 45, 
+      marginBottom: 20,
+      color: 'white',
+    },
+    
+    cardText: {
+      fontSize: fontSize,
+      fontWeight: 'bold',
+    },
+    
+    cardAddButtonText: {
+      fontSize: fontSize,
+      fontWeight: 'bold',
+      color: 'white',
+    },
+  });
+
 
   return (
+    <FontProvider>
     <ImageBackground
       source={require('../../../../assets/background.png')}
       style={styles.container}>
-      <Text style={styles.title}>Add Friends</Text>
+      <Text style={dynamicStyles.title}>Add Friends</Text>
       <FlatList
         data={usersList}
         keyExtractor={(item) => item.id}
         renderItem={renderUserCard}
       />
     </ImageBackground>
+    </FontProvider>
   );
 }
 
