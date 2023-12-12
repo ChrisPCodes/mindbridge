@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, View, Text, ImageBackground, FlatList, TouchableOpacity, Alert } from 'react-native';
+import { StyleSheet, View, Text, ImageBackground, FlatList, TouchableOpacity, TextInput, Alert } from 'react-native';
 import { FIREBASE_AUTH, FIRESTORE_DB } from '../../../../App';
 import { doc, getDoc, updateDoc, collection, getDocs } from 'firebase/firestore';
 
@@ -9,6 +9,7 @@ export default function AddFriends({ navigation }) {
 
   const currentUser = auth.currentUser;
   const [usersList, setUsersList] = React.useState([]);
+  const [searchQuery, setSearchQuery] = React.useState('');
 
   const checkAndAddFriendsList = async () => {
     try {
@@ -19,9 +20,7 @@ export default function AddFriends({ navigation }) {
         if (userDoc.exists()) {
           const userData = userDoc.data();
 
-          // Check if the user already has a friends list
           if (!('friends' in userData) || !Array.isArray(userData.friends)) {
-            // If not, add an empty friends list to the user's document
             await updateDoc(userDocRef, {
               friends: [],
             });
@@ -46,13 +45,11 @@ export default function AddFriends({ navigation }) {
       const querySnapshot = await getDocs(usersCollectionRef);
       const usersData = [];
 
-      // Get the current user's friends list
       const userDocRef = doc(db, 'users', currentUser.uid);
       const userDoc = await getDoc(userDocRef);
       const currentUserFriends = userDoc.data()?.friends || [];
 
       querySnapshot.forEach((doc) => {
-        // Exclude the current user and friends from the list
         if (doc.id !== currentUser.uid && !isFriend(doc.id, currentUserFriends)) {
           usersData.push({
             id: doc.id,
@@ -68,7 +65,6 @@ export default function AddFriends({ navigation }) {
   };
 
   const isFriend = (userId, currentUserFriends) => {
-    // Check if userId is in the friends list
     return currentUserFriends?.some((friend) => friend.uid === userId);
   };
 
@@ -76,33 +72,24 @@ export default function AddFriends({ navigation }) {
     try {
       const userDocRef = doc(db, 'users', currentUser.uid);
 
-      // Get the current user's data
       const userDoc = await getDoc(userDocRef);
       const userData = userDoc.data();
 
-      // Check if the friends field exists and is an array
       if (!('friends' in userData) || !Array.isArray(userData.friends)) {
-        // If not, initialize it as an empty array
         userData.friends = [];
       }
 
-      // Check if the friend is already in the user's friends list
       if (!isFriend(friendId, userData.friends)) {
-        // Update the user's friends list to include the new friend
         userData.friends.push({ uid: friendId, name: friendName });
 
-        // Update the user document in Firestore
         await updateDoc(userDocRef, {
           friends: userData.friends,
         });
 
-        // Remove the friend from the usersList state
         setUsersList(usersList.filter((user) => user.id !== friendId));
 
-        // Inform the user that the friend has been added
         Alert.alert('Friend Added', `You've added ${friendName} as a friend!`);
       } else {
-        // Inform the user that the friend is already in their friends list
         Alert.alert('Friend Exists', `${friendName} is already in your friends list!`);
       }
     } catch (error) {
@@ -126,13 +113,25 @@ export default function AddFriends({ navigation }) {
     </View>
   );
 
+  const filteredUsers = usersList.filter((user) => {
+    return user.name.toLowerCase().includes(searchQuery.toLowerCase());
+  });
+
   return (
     <ImageBackground
       source={require('../../../../assets/background.png')}
       style={styles.container}>
       <Text style={styles.title}>Add Friends</Text>
+      
+      <TextInput
+        style={styles.searchInput}
+        placeholder="Search friends by name..."
+        value={searchQuery}
+        onChangeText={setSearchQuery}
+      />
+
       <FlatList
-        data={usersList}
+        data={filteredUsers}
         keyExtractor={(item) => item.id}
         renderItem={renderUserCard}
       />
@@ -149,7 +148,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 50,
     fontWeight: 'bold',
-    marginTop: 45, 
+    marginTop: 45,
     marginBottom: 20,
     color: 'white',
   },
@@ -175,5 +174,16 @@ const styles = StyleSheet.create({
   cardAddButtonText: {
     fontWeight: 'bold',
     color: 'white',
+  },
+  searchInput: {
+    width: '90%',
+    height: 40,
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 20,
+    padding: 10,
+    marginTop: 10,
+    marginBottom: 20,
+    backgroundColor: 'white',
   },
 });
